@@ -3,76 +3,407 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Capstone Project</title>
+  <title>Quantum Computing Capstone — Optimization with QAOA</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; line-height: 1.5; }
-    header { padding: 56px 20px; background: #111; color: #fff; }
-    main { max-width: 950px; margin: 0 auto; padding: 28px 20px; }
-    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-    .card { border: 1px solid #ddd; border-radius: 14px; padding: 16px; }
-    a.button { display: inline-block; padding: 10px 14px; border-radius: 10px; background: #111; color: #fff; text-decoration: none; margin-right: 8px; }
-    a { color: #111; }
-    footer { padding: 24px 20px; border-top: 1px solid #eee; color: #555; }
-    .muted { color: #777; }
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a33;
+      --text:#e9eefc;
+      --muted:#b8c3e6;
+      --line:rgba(255,255,255,0.12);
+      --accent:#7aa2ff;
+      --accent2:#4de3c2;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(122,162,255,0.25), transparent 55%),
+                  radial-gradient(1000px 500px at 80% 10%, rgba(77,227,194,0.18), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+    a{ color: var(--text); }
+    .container{ max-width:1050px; margin:0 auto; padding:0 18px; }
+
+    /* Nav */
+    .nav{
+      position: sticky; top:0; z-index: 50;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,0.65);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 0;
+      gap:12px;
+    }
+    .brand{
+      display:flex; flex-direction:column;
+      font-weight:700;
+      letter-spacing:0.2px;
+    }
+    .brand small{ color:var(--muted); font-weight:500; }
+    .links{
+      display:flex; flex-wrap:wrap; gap:10px;
+      align-items:center; justify-content:flex-end;
+    }
+    .links a{
+      text-decoration:none;
+      color:var(--muted);
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid transparent;
+    }
+    .links a:hover{
+      color:var(--text);
+      border-color: var(--line);
+      background: rgba(255,255,255,0.04);
+    }
+
+    /* Hero */
+    .hero{ padding:42px 0 22px; }
+    .hero-grid{
+      display:grid; gap:18px;
+      grid-template-columns: 1.25fr 0.75fr;
+    }
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns:1fr; }
+    }
+    .card{
+      background: rgba(15,26,51,0.72);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:18px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+    }
+    h1{ margin:0 0 10px; font-size:32px; line-height:1.15; }
+    .subtitle{ color:var(--muted); margin:0 0 14px; }
+    .pillrow{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background: rgba(255,255,255,0.03);
+    }
+    .btnrow{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 12px;
+      border-radius:12px;
+      text-decoration:none;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color:var(--text);
+      font-weight:600;
+    }
+    .btn.primary{
+      border-color: rgba(122,162,255,0.5);
+      background: linear-gradient(135deg, rgba(122,162,255,0.25), rgba(77,227,194,0.12));
+    }
+    .btn:hover{ filter: brightness(1.05); }
+
+    /* Sections */
+    section{ padding:18px 0; }
+    .section-title{
+      display:flex; align-items:baseline; justify-content:space-between;
+      gap:10px;
+      margin: 0 0 10px;
+    }
+    h2{ margin:0; font-size:20px; }
+    .hint{ color:var(--muted); font-size:13px; }
+
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 900px){ .grid{ grid-template-columns:1fr; } }
+
+    .k{
+      font-weight:700;
+      margin-bottom:6px;
+    }
+    .muted{ color:var(--muted); }
+
+    /* Details (show more) */
+    details{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 12px;
+      background: rgba(255,255,255,0.03);
+    }
+    details + details{ margin-top:10px; }
+    summary{
+      cursor:pointer;
+      font-weight:700;
+      color: var(--text);
+      list-style:none;
+    }
+    summary::-webkit-details-marker{ display:none; }
+    details p{ margin:10px 0 0; color:var(--muted); }
+
+    /* Gallery */
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap:12px;
+    }
+    .thumb{
+      width:100%;
+      border-radius:14px;
+      border:1px solid var(--line);
+      cursor:pointer;
+      transition: transform .12s ease;
+      background: rgba(255,255,255,0.02);
+    }
+    .thumb:hover{ transform: scale(1.02); }
+
+    .lightbox{
+      position:fixed; inset:0; z-index:100;
+      background: rgba(0,0,0,0.78);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .lightbox.hidden{ display:none; }
+    .lightbox-inner{
+      width:min(1100px, 96vw);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .lightbox img{
+      width:100%;
+      max-height:78vh;
+      object-fit: contain;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+    }
+    .lightbox-bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .xbtn{
+      font-size:28px;
+      line-height:1;
+      border:none;
+      background:transparent;
+      color:#fff;
+      cursor:pointer;
+    }
+
+    /* Footer */
+    footer{
+      padding:26px 0 36px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      margin-top:16px;
+    }
   </style>
 </head>
+
 <body>
-  <header>
-    <h1>Your Capstone Project Name</h1>
-    <p class="muted">One sentence: what problem you solve + who it helps.</p>
-    <p>
-      <a class="button" href="#demo">Demo</a>
-      <a class="button" href="#docs" style="background:#444;">Docs</a>
-    </p>
-  </header>
+  <div class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        Solving Combinatorial Optimization with Quantum Computers
+        <small>Capstone • Qiskit • QAOA • Max-Cut</small>
+      </div>
+      <div class="links">
+        <a href="#overview">Overview</a>
+        <a href="#work">Work</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#downloads">Downloads</a>
+        <a href="https://github.com/xinghanwen2/Solving-Combinatorial-Optimization-with-Quantum-Computers" target="_blank">Repo</a>
+      </div>
+    </div>
+  </div>
 
-  <main>
-    <section id="about">
-      <h2>About</h2>
-      <p>
-        Write 3–5 sentences explaining the project, the client, and the goal.
-      </p>
+  <div class="container hero" id="overview">
+    <div class="hero-grid">
+      <div class="card">
+        <h1>Quantum Computing Capstone Project</h1>
+        <p class="subtitle">
+          By Hanwen Xing, Matteo Johnson, and Anthony Gelasi — exploring quantum computing techniques for optimization,
+          and building a website that demonstrates our progress and results.
+        </p>
+
+        <div class="pillrow">
+          <div class="pill">IBM Quantum Course</div>
+          <div class="pill">QAOA for Max-Cut</div>
+          <div class="pill">Qiskit Implementation</div>
+          <div class="pill">Visual Results (JPG/PNG)</div>
+        </div>
+
+        <div class="btnrow">
+          <a class="btn primary" href="#gallery">View Gallery</a>
+          <a class="btn" href="#work">See Work Completed</a>
+          <a class="btn" href="#downloads">Download Materials</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="k">This Semester Focus</div>
+        <div class="muted">
+          Hands-on quantum programming with IBM Quantum and Qiskit, understanding variational algorithms, implementing QAOA,
+          and preparing a demonstrable final product website.
+        </div>
+        <hr style="border:none;border-top:1px solid var(--line);margin:14px 0;">
+        <div class="k">Status</div>
+        <div class="muted">
+          Assignments 1–3 completed; Assignment 4 in progress (QAOA Max-Cut implementation and analysis).
+        </div>
+      </div>
+    </div>
+
+    <section id="work">
+      <div class="section-title">
+        <h2>Work Completed</h2>
+        <div class="hint">Click to expand details</div>
+      </div>
+
+      <details>
+        <summary>Assignment 1 — Quantum Gates</summary>
+        <p>
+          Studied matrix representations of gates and verified key identities (Pauli relationships, tensor products),
+          reinforcing multi-qubit operations.
+        </p>
+      </details>
+
+      <details>
+        <summary>Assignment 2 — Simple Quantum Circuit Execution</summary>
+        <p>
+          Built and executed basic circuits using IBM’s platform; practiced gate placement, measurement,
+          and interpreting results from real deployments.
+        </p>
+      </details>
+
+      <details>
+        <summary>Assignment 3 — QAOA Gate Construction</summary>
+        <p>
+          Analyzed QAOA cost and mixer operators and computed gates for small systems, building theoretical understanding
+          of variational algorithms.
+        </p>
+      </details>
+
+      <details>
+        <summary>Current Work — Assignment 4 (QAOA for Max-Cut)</summary>
+        <p>
+          Translating QAOA operators into executable circuits, running simulations, and analyzing correctness and
+          optimization strategies. This is our key transition from theory to practical algorithm development.
+        </p>
+      </details>
     </section>
 
-    <section id="features">
-      <h2>Key Features</h2>
+    <section id="workflow">
+      <div class="section-title">
+        <h2>Workflow & Milestones</h2>
+        <div class="hint">Images are click-to-zoom + downloadable</div>
+      </div>
+
       <div class="grid">
-        <div class="card"><h3>Feature 1</h3><p>Short description.</p></div>
-        <div class="card"><h3>Feature 2</h3><p>Short description.</p></div>
-        <div class="card"><h3>Feature 3</h3><p>Short description.</p></div>
+        <div class="card">
+          <div class="k">Chevron Workflow</div>
+          <div class="muted">Research → Qiskit Experiments → Implementation → Evaluation → Final Demo</div>
+        </div>
+        <div class="card">
+          <div class="k">Planning</div>
+          <div class="muted">Track weekly progress, key tasks, and mini demos.</div>
+        </div>
+        <div class="card">
+          <div class="k">Final Deliverable</div>
+          <div class="muted">An interactive website that showcases concepts, circuits, results, and applications.</div>
+        </div>
       </div>
     </section>
 
-    <section id="demo">
-      <h2>Demo</h2>
-      <ul>
-        <li><strong>Live site:</strong> (this page)</li>
-        <li><strong>Demo video:</strong> <a href="#">Add YouTube link</a></li>
-        <li><strong>Repo:</strong> <a href="#">Add GitHub repo link</a></li>
-      </ul>
-    </section>
+    <section id="gallery">
+      <div class="section-title">
+        <h2>Gallery</h2>
+        <div class="hint">Click an image to enlarge</div>
+      </div>
 
-    <section id="docs">
-      <h2>Docs / Architecture</h2>
-      <p>Add links to your proposal, design, diagrams, API docs, etc.</p>
-    </section>
+      <div class="gallery">
+        <!-- Update these filenames to match what you uploaded -->
+        <img class="thumb" src="assets/img/cherron.jpg" alt="Quantum Computing Chevron Diagram">
+        <img class="thumb" src="assets/img/gantt.png" alt="Project Gantt Chart">
+      </div>
 
-    <section id="team">
-      <h2>Team</h2>
-      <div class="grid">
-        <div class="card"><h3>Member A</h3><p>Role + responsibilities.</p></div>
-        <div class="card"><h3>Member B</h3><p>Role + responsibilities.</p></div>
-        <div class="card"><h3>Member C</h3><p>Role + responsibilities.</p></div>
+      <div id="lightbox" class="lightbox hidden" aria-hidden="true">
+        <div class="lightbox-inner">
+          <div class="lightbox-bar">
+            <button class="xbtn" id="closeBtn" aria-label="Close">×</button>
+            <a class="btn primary" id="downloadLink" download>Download</a>
+          </div>
+          <img id="lightboxImg" alt="Large view">
+        </div>
       </div>
     </section>
-  </main>
 
-  <footer>
-    <p>© <span id="year"></span> Your Team • Contact: your-email@school.edu</p>
-  </footer>
+    <section id="downloads">
+      <div class="section-title">
+        <h2>Downloads</h2>
+        <div class="hint">Add your reports/slides here</div>
+      </div>
+
+      <div class="card">
+        <ul style="margin:0; padding-left:18px;">
+          <li><a href="assets/img/cherron.jpg" download>Download: Chevron Workflow (JPG)</a></li>
+          <li><a href="assets/img/gantt.png" download>Download: Gantt Chart (PNG)</a></li>
+          <!-- Example: put a PDF in assets/docs/ then link it here -->
+          <!-- <li><a href="assets/docs/ProjectGuide.pdf" download>Download: Project Guide (PDF)</a></li> -->
+        </ul>
+        <p class="muted" style="margin-top:10px;">
+          Tip: PDFs are best for downloads. If you have a .docx, it still works, but PDF is more universal.
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> Quantum Capstone Team • Contact: (add email)
+    </footer>
+  </div>
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    const thumbs = document.querySelectorAll(".thumb");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+    const closeBtn = document.getElementById("closeBtn");
+    const downloadLink = document.getElementById("downloadLink");
+
+    thumbs.forEach(img => {
+      img.addEventListener("click", () => {
+        lightboxImg.src = img.src;
+        lightboxImg.alt = img.alt;
+        downloadLink.href = img.src;
+        downloadLink.setAttribute("download", img.src.split("/").pop());
+        lightbox.classList.remove("hidden");
+        lightbox.setAttribute("aria-hidden", "false");
+      });
+    });
+
+    function closeLightbox(){
+      lightbox.classList.add("hidden");
+      lightbox.setAttribute("aria-hidden", "true");
+    }
+
+    closeBtn.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLightbox();
+    });
   </script>
 </body>
 </html>
