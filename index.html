@@ -15,6 +15,10 @@
       --accent2:#4de3c2;
     }
     *{ box-sizing:border-box; }
+
+    /* Smooth scroll for nav jumps */
+    html { scroll-behavior: smooth; }
+
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -214,12 +218,13 @@
     <div class="container nav-inner">
       <div class="brand">
         Solving Combinatorial Optimization with Quantum Computers
-        <small>Capstone • Qiskit • QAOA • Max-Cut</small>
+        <small>Capstone • Qiskit • IBM</small>
       </div>
       <div class="links">
         <a href="#overview">Overview</a>
         <a href="#work">Work</a>
         <a href="#workflow">Workflow</a>
+        <a href="#weekly-goal">This Sprint</a>
         <a href="#gallery">Gallery</a>
         <a href="#downloads">Downloads</a>
         <a href="https://github.com/xinghanwen2/Solving-Combinatorial-Optimization-with-Quantum-Computers" target="_blank">Repo</a>
@@ -303,6 +308,92 @@
       </details>
     </section>
 
+    <!-- This Week -->
+    <section id="weekly-goal">
+      <div class="section-title">
+        <h2>This Week’s Goal</h2>
+        <div class="hint">Short summary + click to expand details</div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="k">Goal</div>
+          <div class="muted">
+            Make solid progress on QAOA for Max-Cut: verify correctness on small graphs, run simulations (and real-device runs
+            if possible), and prepare screenshots/plots for our sprint update.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="k">Deliverables</div>
+          <div class="muted">
+            (1) A working QAOA notebook run, (2) result screenshots (histograms / best cut values),
+            (3) a short explanation on this website (what QAOA is + why Max-Cut).
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="k">Success Criteria</div>
+          <div class="muted">
+            We can reproduce results consistently (same graph → similar best cuts), and explain the pipeline clearly
+            for a non-expert audience.
+          </div>
+        </div>
+      </div>
+
+      <details style="margin-top:12px;">
+        <summary>Show more: What is QAOA and how does it work?</summary>
+
+        <p>
+          <strong>QAOA (Quantum Approximate Optimization Algorithm)</strong> is a hybrid algorithm used to find good solutions to
+          hard optimization problems. “Hybrid” means we use a <strong>quantum circuit</strong> to generate candidate solutions
+          and a <strong>classical optimizer</strong> to tune circuit parameters.
+        </p>
+
+        <p>
+          The circuit alternates between two steps:
+          <strong>(1) a cost step</strong> that encourages high-quality answers (higher objective value), and
+          <strong>(2) a mixing step</strong> that explores different possibilities. We repeat these steps for a small number of
+          layers (often called <em>p</em>). A classical optimizer searches for good angles (often written as <em>γ</em> and <em>β</em>)
+          to improve the result.
+        </p>
+
+        <details style="margin-top:10px;">
+          <summary>Show more: Why Max-Cut is related</summary>
+          <p>
+            <strong>Max-Cut</strong> is a classic graph problem: split nodes into two groups so the number (or total weight) of edges
+            crossing between groups is as large as possible. In QAOA, we encode each node as a qubit (0 = group A, 1 = group B).
+            After measurement, each bitstring describes a cut, and we compute its cut value to see how good it is.
+          </p>
+        </details>
+
+        <details style="margin-top:10px;">
+          <summary>Show more: Our “how we run it” checklist</summary>
+          <p>
+            1) Choose a small graph (start with 4–8 nodes).<br>
+            2) Build the QAOA circuit (cost + mixer layers).<br>
+            3) Run a simulator for quick testing and optionally a real IBM backend.<br>
+            4) Measure many shots → collect bitstrings.<br>
+            5) Compute cut values → find best/average performance.<br>
+            6) Tune parameters (γ, β) with a classical optimizer.
+          </p>
+        </details>
+
+        <details style="margin-top:10px;">
+          <summary>Show more: Real-world applications</summary>
+          <p>
+            Problems related to graph partitioning and combinatorial optimization show up in:<br>
+            <strong>• Logistics & scheduling</strong> (assigning tasks/resources efficiently),<br>
+            <strong>• Network design</strong> (partitioning networks to reduce interference / improve robustness),<br>
+            <strong>• Portfolio optimization</strong> (selecting assets under constraints),<br>
+            <strong>• ML/analytics</strong> (clustering and graph-based objectives),<br>
+            <strong>• Resource allocation</strong> (maximizing benefit under limited capacity).
+          </p>
+        </details>
+      </details>
+    </section>
+    <!-- This week -->
+
     <section id="workflow">
       <div class="section-title">
         <h2>Workflow & Milestones</h2>
@@ -324,7 +415,7 @@
         </div>
       </div>
     </section>
-
+    
     <section id="gallery">
       <div class="section-title">
         <h2>Gallery</h2>
@@ -334,17 +425,11 @@
       <div class="gallery">
         <!-- Update these filenames to match what you uploaded -->
         <img class="thumb" src="assets/img/Multiple Systems Final ReportF (2).jpg" alt="Multiple Systems Final Report">
-
         <img class="thumb" src="assets/img/Project Gantt Chart.png" alt="Online Gantt Chart">
-
         <img class="thumb" src="assets/img/Quantum Circuits Final Report.jpg" alt="Quantum Circuits Final Report">
-
         <img class="thumb" src="assets/img/Quantum Computing 2025 Final Report1 (1).jpg" alt="Quantum Computing 2025 Final Report 1">
-
         <img class="thumb" src="assets/img/Quantum Computing 2025 Final Report2 (1).jpg" alt="Quantum Computing 2025 Final Report 2">
-
         <img class="thumb" src="assets/img/QuantumComputingSingleSystem (2).jpg" alt="Quantum Computing Single System">
-
         <img class="thumb" src="assets/img/cherron diagram improvedF (2).jpg" alt="Quantum Computing Chevron Diagram">
       </div>
 
@@ -359,56 +444,56 @@
       </div>
     </section>
 
-<section id="downloads">
-  <div class="section-title">
-    <h2>Downloads</h2>
-    <div class="hint">Project documentation and reports</div>
-  </div>
+    <section id="downloads">
+      <div class="section-title">
+        <h2>Downloads</h2>
+        <div class="hint">Project documentation and reports</div>
+      </div>
 
-  <div class="grid">
-    <div class="card">
-      <div class="k">Project Guide</div>
-      <a class="btn primary" href="assets/docs/project-guide.docx" download>
-        Download DOCX
-      </a>
-    </div>
+      <div class="grid">
+        <div class="card">
+          <div class="k">Project Guide</div>
+          <a class="btn primary" href="assets/docs/project-guide.docx" download>
+            Download DOCX
+          </a>
+        </div>
 
-    <div class="card">
-      <div class="k">Sprint 1 Review</div>
-      <a class="btn primary" href="assets/docs/sprint1-review.docx" download>
-        Download DOCX
-      </a>
-    </div>
+        <div class="card">
+          <div class="k">Sprint 1 Review</div>
+          <a class="btn primary" href="assets/docs/sprint1-review.docx" download>
+            Download DOCX
+          </a>
+        </div>
 
-    <div class="card">
-      <div class="k">Sprint 7 Report</div>
-      <a class="btn primary" href="assets/docs/sprint7-report.docx" download>
-        Download DOCX
-      </a>
-    </div>
+        <div class="card">
+          <div class="k">Sprint 7 Report</div>
+          <a class="btn primary" href="assets/docs/sprint7-report.docx" download>
+            Download DOCX
+          </a>
+        </div>
 
-    <div class="card">
-      <div class="k">Technical Standards</div>
-      <a class="btn primary" href="assets/docs/technical-standards.docx" download>
-        Download DOCX
-      </a>
-    </div>
+        <div class="card">
+          <div class="k">Technical Standards</div>
+          <a class="btn primary" href="assets/docs/technical-standards.docx" download>
+            Download DOCX
+          </a>
+        </div>
 
-    <div class="card">
-      <div class="k">Team Working Agreement</div>
-      <a class="btn primary" href="assets/docs/team-agreement.docx" download>
-        Download DOCX
-      </a>
-    </div>
+        <div class="card">
+          <div class="k">Team Working Agreement</div>
+          <a class="btn primary" href="assets/docs/team-agreement.docx" download>
+            Download DOCX
+          </a>
+        </div>
 
-    <div class="card">
-      <div class="k">Charter</div>
-      <a class="btn primary" href="assets/docs/charter.docx" download>
-        Download DOCX
-      </a>
-    </div>
-  </div>
-</section>
+        <div class="card">
+          <div class="k">Charter</div>
+          <a class="btn primary" href="assets/docs/charter.docx" download>
+            Download DOCX
+          </a>
+        </div>
+      </div>
+    </section>
 
     <footer>
       © <span id="year"></span> Solving Combinatorial Optimization with Quantum Computers • Contact: (xingh2@miamioh.edu)
