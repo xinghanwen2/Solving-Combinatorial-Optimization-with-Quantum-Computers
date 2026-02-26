@@ -499,6 +499,11 @@
   </div>
 
   <script>
+    // Announcement popup when page loads
+    window.addEventListener("load", function () {
+      alert("We’re excited to share that our website will receive a significant update on March 6, introducing a new AI Assistant designed to make your experience smoother, faster, and more interactive.");
+    });
+    
     document.getElementById("year").textContent = new Date().getFullYear();
 
     const thumbs = document.querySelectorAll(".thumb");
