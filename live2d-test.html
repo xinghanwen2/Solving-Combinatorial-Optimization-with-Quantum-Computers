@@ -35,38 +35,41 @@
 
   <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/pixi.js@6/dist/browser/pixi.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/cubism4.min.js"></script>
 
   <script>
     const app = new PIXI.Application({
       resizeTo: window,
       backgroundAlpha: 0
     });
+
     document.getElementById("stage").appendChild(app.view);
 
     const modelPath = "assets/live2d/仟云桥.model3.json";
     console.log("Trying to load:", modelPath);
 
-    Live2DModel.from(modelPath).then(model => {
-      console.log("Model loaded successfully");
+    PIXI.live2d.Live2DModel.from(modelPath)
+      .then(model => {
+        console.log("Model loaded successfully");
 
-      app.stage.addChild(model);
+        app.stage.addChild(model);
 
-      model.scale.set(0.28);
-      model.x = window.innerWidth * 0.8;
-      model.y = window.innerHeight * 0.95;
-      model.anchor.set(0.5, 1);
-
-      model.interactive = true;
-
-      window.addEventListener("resize", () => {
+        model.scale.set(0.28);
         model.x = window.innerWidth * 0.8;
         model.y = window.innerHeight * 0.95;
+        model.anchor.set(0.5, 1);
+
+        model.interactive = true;
+
+        window.addEventListener("resize", () => {
+          model.x = window.innerWidth * 0.8;
+          model.y = window.innerHeight * 0.95;
+        });
+      })
+      .catch(err => {
+        console.error("Failed to load Live2D model:", err);
+        alert("Model failed to load. Press F12 and check Console.");
       });
-    }).catch(err => {
-      console.error("Failed to load Live2D model:", err);
-      alert("Model failed to load. Press F12 and check Console.");
-    });
   </script>
 </body>
 </html>
