@@ -210,6 +210,48 @@
       color:var(--muted);
       margin-top:16px;
     }
+
+    /* Live2D assistant */
+    #assistant-layer{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 320px;
+      height: 420px;
+      z-index: 90;
+      pointer-events: none;
+    }
+
+    #assistant-stage{
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: visible;
+    }
+
+    #assistant-badge{
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 5;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    @media (max-width: 900px){
+      #assistant-layer{
+        width: 220px;
+        height: 300px;
+        right: 8px;
+        bottom: 8px;
+      }
+    }
+
+    
   </style>
 </head>
 
@@ -250,7 +292,7 @@
 
         <div class="btnrow">
           <a class="btn primary" href="#gallery">View Gallery</a>
-          <a class="btn" href="#work">This Week’s Goal</a>
+          <a class="btn" href="#weekly-goal">This Week’s Goal</a>
           <a class="btn" href="#downloads">Download Materials</a>
         </div>
       </div>
@@ -496,8 +538,17 @@
     <footer>
       © <span id="year"></span> Solving Combinatorial Optimization with Quantum Computers • Contact: (xingh2@miamioh.edu)
     </footer>
-  </div>
-
+    </div>
+  
+    <div id="assistant-layer" aria-hidden="true">
+      <div id="assistant-stage">
+        <div id="assistant-badge">AI Assistant</div>
+      </div>
+    </div>
+  
+  <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pixi.js@6/dist/browser/pixi.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/cubism4.min.js"></script>
   <script>
     
     
@@ -532,6 +583,78 @@
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeLightbox();
     });
+
+    // Live2D assistant in bottom-right corner
+(function () {
+  const assistantStage = document.getElementById("assistant-stage");
+  if (!assistantStage) return;
+
+  const assistantApp = new PIXI.Application({
+    width: assistantStage.clientWidth,
+    height: assistantStage.clientHeight,
+    backgroundAlpha: 0,
+    antialias: true
+  });
+
+  assistantStage.appendChild(assistantApp.view);
+
+  const modelPath = "assets/live2d/仟云桥.model3.json";
+
+  PIXI.live2d.Live2DModel.from(modelPath)
+    .then(model => {
+      assistantApp.stage.addChild(model);
+
+      // Position and size for bottom-right display
+      model.scale.set(0.22);
+      model.x = assistantApp.view.width * 0.5;
+      model.y = assistantApp.view.height * 0.98;
+      model.anchor.set(0.5, 1);
+
+      let targetX = 0;
+      let targetY = 0;
+      let currentX = 0;
+      let currentY = 0;
+
+      window.addEventListener("mousemove", (e) => {
+        const nx = (e.clientX / window.innerWidth) * 2 - 1;
+        const ny = (e.clientY / window.innerHeight) * 2 - 1;
+
+        targetX = nx * 0.35;
+        targetY = -ny * 0.25;
+      });
+
+      assistantApp.ticker.add(() => {
+        currentX += (targetX - currentX) * 0.06;
+        currentY += (targetY - currentY) * 0.06;
+
+        if (model.internalModel && model.internalModel.focusController) {
+          model.internalModel.focusController.focus(currentX, currentY, false);
+        }
+      });
+
+      function resizeAssistant() {
+        const w = assistantStage.clientWidth;
+        const h = assistantStage.clientHeight;
+        assistantApp.renderer.resize(w, h);
+
+        model.x = w * 0.5;
+        model.y = h * 0.98;
+
+        if (window.innerWidth <= 900) {
+          model.scale.set(0.16);
+        } else {
+          model.scale.set(0.22);
+        }
+      }
+
+      window.addEventListener("resize", resizeAssistant);
+      resizeAssistant();
+    })
+    .catch(err => {
+      console.error("Failed to load assistant model:", err);
+    });
+})();
+    
   </script>
 </body>
 </html>
