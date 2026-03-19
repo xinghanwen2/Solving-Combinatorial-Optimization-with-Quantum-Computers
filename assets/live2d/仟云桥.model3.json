@@ -1,0 +1,37 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "仟云桥.moc3",
+		"Textures": [
+			"仟云桥.8192/texture_00.png",
+			"仟云桥.8192/texture_01.png",
+			"仟云桥.8192/texture_02.png",
+			"仟云桥.8192/texture_03.png"
+		],
+		"Physics": "仟云桥.physics3.json",
+		"DisplayInfo": "仟云桥.cdi3.json",
+		"Expressions": [
+			{
+				"Name": "expression1",
+				"File": "youyu.exp3.json"
+			},
+			{
+				"Name": "expression2",
+				"File": "lanxing.exp3.json"
+			}
+		]
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": []
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	],
+	"HitAreas": []
+}
