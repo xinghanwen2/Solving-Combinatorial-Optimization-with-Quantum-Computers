@@ -1,53 +1,95 @@
-<script>
-  const app = new PIXI.Application({
-    resizeTo: window,
-    backgroundAlpha: 0
-  });
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live2D Test</title>
+  <style>
+    body{
+      margin:0;
+      background:#0b1220;
+      color:#fff;
+      font-family:Arial, sans-serif;
+    }
+    #stage{
+      width:100vw;
+      height:100vh;
+      position:relative;
+      overflow:hidden;
+    }
+    .label{
+      position:absolute;
+      top:16px;
+      left:16px;
+      z-index:10;
+      background:rgba(0,0,0,0.4);
+      padding:10px 14px;
+      border-radius:10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <div class="label">Live2D model test</div>
+  </div>
 
-  document.getElementById("stage").appendChild(app.view);
+  <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pixi.js@6/dist/browser/pixi.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/cubism4.min.js"></script>
 
-  const modelPath = "assets/live2d/仟云桥.model3.json";
+  <script>
+    const app = new PIXI.Application({
+      resizeTo: window,
+      backgroundAlpha: 0
+    });
 
-  PIXI.live2d.Live2DModel.from(modelPath)
-    .then(model => {
-      app.stage.addChild(model);
+    document.getElementById("stage").appendChild(app.view);
 
-      model.scale.set(0.28);
-      model.x = window.innerWidth * 0.8;
-      model.y = window.innerHeight * 0.95;
-      model.anchor.set(0.5, 1);
+    const modelPath = "assets/live2d/仟云桥.model3.json";
 
-      // Reduce automatic tracking feel
-      let targetX = 0;
-      let targetY = 0;
-      let currentX = 0;
-      let currentY = 0;
+    PIXI.live2d.Live2DModel.from(modelPath)
+      .then(model => {
+        app.stage.addChild(model);
 
-      window.addEventListener("mousemove", (e) => {
-        const nx = (e.clientX / window.innerWidth) * 2 - 1;
-        const ny = (e.clientY / window.innerHeight) * 2 - 1;
-
-        // shrink the influence so she doesn't turn too much
-        targetX = nx * 0.35;
-        targetY = ny * 0.25;
-      });
-
-      app.ticker.add(() => {
-        // smoothing
-        currentX += (targetX - currentX) * 0.06;
-        currentY += (targetY - currentY) * 0.06;
-
-        if (model.internalModel && model.internalModel.focusController) {
-          model.internalModel.focusController.focus(currentX, currentY, false);
-        }
-      });
-
-      window.addEventListener("resize", () => {
+        model.scale.set(0.28);
         model.x = window.innerWidth * 0.8;
         model.y = window.innerHeight * 0.95;
+        model.anchor.set(0.5, 1);
+
+        // Reduce automatic tracking feel
+        let targetX = 0;
+        let targetY = 0;
+        let currentX = 0;
+        let currentY = 0;
+
+        window.addEventListener("mousemove", (e) => {
+          const nx = (e.clientX / window.innerWidth) * 2 - 1;
+          const ny = (e.clientY / window.innerHeight) * 2 - 1;
+
+          // smaller movement range
+          targetX = nx * 0.35;
+          targetY = ny * 0.25;
+        });
+
+        app.ticker.add(() => {
+          // smoothing
+          currentX += (targetX - currentX) * 0.06;
+          currentY += (targetY - currentY) * 0.06;
+
+          if (model.internalModel && model.internalModel.focusController) {
+            model.internalModel.focusController.focus(currentX, currentY, false);
+          }
+        });
+
+        window.addEventListener("resize", () => {
+          model.x = window.innerWidth * 0.8;
+          model.y = window.innerHeight * 0.95;
+        });
+      })
+      .catch(err => {
+        console.error("Failed to load Live2D model:", err);
+        alert("Model failed to load. Press F12 and check Console.");
       });
-    })
-    .catch(err => {
-      console.error("Failed to load Live2D model:", err);
-    });
-</script>
+  </script>
+</body>
+</html>
