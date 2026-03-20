@@ -918,7 +918,7 @@
   <div id="assistant-layer">
     <div id="assistant-bubble"></div>
 
-    <div id="assistant-chat">
+    <div id="assistant-chat" class="hidden">
       <div class="chat-header">
         <span>Ask the AI Assistant</span>
         <div class="chat-header-actions">
@@ -1026,6 +1026,8 @@
     openChatBtn.addEventListener("click", () => {
       setChatOpen(true);
     });
+
+    setChatOpen(false);
 
     clearChatBtn.addEventListener("click", () => {
       chatMessages.innerHTML = "";
