@@ -1011,6 +1011,7 @@
     function setChatOpen(isOpen) {
       if (isOpen) {
         assistantChat.classList.remove("hidden");
+        assistantBubble.classList.remove("show");
         openChatBtn.classList.remove("show");
         setTimeout(() => chatInput.focus(), 120);
       } else {
@@ -1024,10 +1025,15 @@
     });
 
     openChatBtn.addEventListener("click", () => {
-      setChatOpen(true);
+      triggerRandomExpression();
     });
 
     setChatOpen(false);
+
+    assistantBubble.addEventListener("click", () => {
+      setChatOpen(true);
+      assistantBubble.classList.remove("show");
+    });
 
     clearChatBtn.addEventListener("click", () => {
       chatMessages.innerHTML = "";
@@ -1087,6 +1093,85 @@
     });
 
     /* Bubble messages */
+    const expressionFiles = [
+      "assets/live2d/aixin.exp3.json",
+      "assets/live2d/bixin.exp3.json",
+      "assets/live2d/bu.exp3.json",
+      "assets/live2d/buR.exp3.json",
+      "assets/live2d/dai.exp3.json",
+      "assets/live2d/diaozhui.exp3.json",
+      "assets/live2d/guangjiao.exp3.json",
+      "assets/live2d/guoti.exp3.json",
+      "assets/live2d/hudiejie.exp3.json",
+      "assets/live2d/jiandao.exp3.json",
+      "assets/live2d/jiandaoR.exp3.json",
+      "assets/live2d/jiandaoyan.exp3.json",
+      "assets/live2d/kuku.exp3.json",
+      "assets/live2d/lanxing.exp3.json",
+      "assets/live2d/lianhei.exp3.json",
+      "assets/live2d/lianhong.exp3.json",
+      "assets/live2d/luan.exp3.json",
+      "assets/live2d/molian.exp3.json",
+      "assets/live2d/shengqi.exp3.json",
+      "assets/live2d/shitou.exp3.json",
+      "assets/live2d/shitouR.exp3.json",
+      "assets/live2d/toushi.exp3.json",
+      "assets/live2d/tuzixie.exp3.json",
+      "assets/live2d/wazi.exp3.json",
+      "assets/live2d/woquan.exp3.json",
+      "assets/live2d/wuyu.exp3.json",
+      "assets/live2d/xingxing.exp3.json",
+      "assets/live2d/xingxingshou.exp3.json",
+      "assets/live2d/xingxingshouR.exp3.json",
+      "assets/live2d/yifuqiehuan.exp3.json",
+      "assets/live2d/youyu.exp3.json"
+    ];
+
+    let live2dModelRef = null;
+    let expressionResetTimer = null;
+
+    function triggerRandomExpression() {
+      if (!live2dModelRef) return;
+
+      const randomFile = expressionFiles[Math.floor(Math.random() * expressionFiles.length)];
+
+      try {
+        if (typeof live2dModelRef.expression === "function") {
+          live2dModelRef.expression(randomFile);
+        } else if (
+          live2dModelRef.internalModel &&
+          typeof live2dModelRef.internalModel.setExpression === "function"
+        ) {
+          live2dModelRef.internalModel.setExpression(randomFile);
+        } else {
+          console.warn("Expression method not found on this Live2D runtime.");
+          return;
+        }
+
+        if (expressionResetTimer) {
+          clearTimeout(expressionResetTimer);
+        }
+
+        expressionResetTimer = setTimeout(() => {
+          try {
+            if (typeof live2dModelRef.expression === "function") {
+              live2dModelRef.expression(null);
+            } else if (
+              live2dModelRef.internalModel &&
+              typeof live2dModelRef.internalModel.setExpression === "function"
+            ) {
+              live2dModelRef.internalModel.setExpression(null);
+            }
+          } catch (err) {
+            console.warn("Could not reset expression:", err);
+          }
+        }, 2000);
+
+      } catch (err) {
+        console.error("Failed to trigger expression:", err);
+      }
+    }
+    
     const bubbleMessages = [
       "Is there anything you don’t understand?(;｀O´)o",
       "Want a quick explanation of quantum gates?(*´∀｀*)ノ♡",
@@ -1095,6 +1180,8 @@
     ];
 
     function showBubbleMessage(text) {
+      if (!assistantChat.classList.contains("hidden")) return;
+
       assistantBubble.textContent = text;
       assistantBubble.classList.add("show");
 
@@ -1134,8 +1221,9 @@
       const modelPath = "assets/live2d/仟云桥.model3.json";
 
       PIXI.live2d.Live2DModel.from(modelPath)
-        .then(model => {
-          assistantApp.stage.addChild(model);
+      .then(model => {
+        live2dModelRef = model;
+        assistantApp.stage.addChild(model);
 
           model.x = assistantApp.view.width * 0.5;
           model.y = assistantApp.view.height * 0.98;
