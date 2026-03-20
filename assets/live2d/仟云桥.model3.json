@@ -11,15 +11,38 @@
 		"Physics": "仟云桥.physics3.json",
 		"DisplayInfo": "仟云桥.cdi3.json",
 		"Expressions": [
-			{
-				"Name": "expression1",
-				"File": "youyu.exp3.json"
-			},
-			{
-				"Name": "expression2",
-				"File": "lanxing.exp3.json"
-			}
-		]
+      { "Name": "aixin", "File": "aixin.exp3.json" },
+      { "Name": "bixin", "File": "bixin.exp3.json" },
+      { "Name": "bu", "File": "bu.exp3.json" },
+      { "Name": "buR", "File": "buR.exp3.json" },
+      { "Name": "dai", "File": "dai.exp3.json" },
+      { "Name": "diaozhui", "File": "diaozhui.exp3.json" },
+      { "Name": "guangjiao", "File": "guangjiao.exp3.json" },
+      { "Name": "guoti", "File": "guoti.exp3.json" },
+      { "Name": "hudiejie", "File": "hudiejie.exp3.json" },
+      { "Name": "jiandao", "File": "jiandao.exp3.json" },
+      { "Name": "jiandaoR", "File": "jiandaoR.exp3.json" },
+      { "Name": "jiandaoyan", "File": "jiandaoyan.exp3.json" },
+      { "Name": "kuku", "File": "kuku.exp3.json" },
+      { "Name": "lanxing", "File": "lanxing.exp3.json" },
+      { "Name": "lianhei", "File": "lianhei.exp3.json" },
+      { "Name": "lianhong", "File": "lianhong.exp3.json" },
+      { "Name": "luan", "File": "luan.exp3.json" },
+      { "Name": "molian", "File": "molian.exp3.json" },
+      { "Name": "shengqi", "File": "shengqi.exp3.json" },
+      { "Name": "shitou", "File": "shitou.exp3.json" },
+      { "Name": "shitouR", "File": "shitouR.exp3.json" },
+      { "Name": "toushi", "File": "toushi.exp3.json" },
+      { "Name": "tuzixie", "File": "tuzixie.exp3.json" },
+      { "Name": "wazi", "File": "wazi.exp3.json" },
+      { "Name": "woquan", "File": "woquan.exp3.json" },
+      { "Name": "wuyu", "File": "wuyu.exp3.json" },
+      { "Name": "xingxing", "File": "xingxing.exp3.json" },
+      { "Name": "xingxingshou", "File": "xingxingshou.exp3.json" },
+      { "Name": "xingxingshouR", "File": "xingxingshouR.exp3.json" },
+      { "Name": "yifuqiehuan", "File": "yifuqiehuan.exp3.json" },
+      { "Name": "youyu", "File": "youyu.exp3.json" }
+    ]
 	},
 	"Groups": [
 		{
