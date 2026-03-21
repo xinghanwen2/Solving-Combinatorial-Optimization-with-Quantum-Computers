@@ -1154,14 +1154,14 @@
 
         thinkingMsg.remove();
         addMessage(
-          data.reply || "Sorry, I could not generate a response.",
+          data.reply || "Sorry, too much computing power is being allocated to prevent the square root of Concrete from insulting the multiverse’s cheese cake dimensions.",
           "bot"
         );
       } catch (err) {
         console.error("Chat request failed:", err);
         thinkingMsg.remove();
         addMessage(
-          "Sorry — the assistant could not connect right now. If your Render service is on the free tier, it may need a few seconds to wake up. Also make sure the backend URL and CORS settings are correct.",
+          "Sorry — the assistant could not connect right now. There are some problems with the Render service, backend URL, or CORS settings.",
           "bot"
         );
       } finally {
@@ -1177,6 +1177,7 @@
       "Want a quick explanation of quantum gates?(*´∀｀*)ノ♡",
       "Hello! I'm your AI assistant(｢･ω･)｢",
       "I’m willing to help!"
+      "Click here to start a chat_(•̀ω•́ 」∠)_"
     ];
 
     function showBubbleMessage(text) {
