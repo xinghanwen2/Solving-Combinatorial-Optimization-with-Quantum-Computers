@@ -30,6 +30,44 @@
     a{ color: var(--text); }
     .container{ max-width:1050px; margin:0 auto; padding:0 18px; }
 
+    .feature-quiz-btn{
+      display:inline-flex;
+      flex-direction:column;
+      align-items:flex-start;
+      justify-content:center;
+      gap:4px;
+      padding:16px 22px;
+      min-width:220px;
+      border-radius:16px;
+      text-decoration:none;
+      border:1px solid rgba(122,162,255,0.6);
+      background: linear-gradient(135deg, rgba(122,162,255,0.35), rgba(77,227,194,0.2));
+     color:var(--text);
+       box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+    }
+
+    .feature-quiz-btn:hover{
+      transform: translateY(-2px) scale(1.02);
+      filter: brightness(1.06);
+      box-shadow: 0 16px 34px rgba(0,0,0,0.28);
+    }
+
+    .feature-quiz-label{
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:0.6px;
+      text-transform:uppercase;
+      color:rgba(233,238,252,0.8);
+    }
+
+    .feature-quiz-title{
+      font-size:20px;
+      font-weight:800;
+      line-height:1.15;
+      color:var(--text);
+    }
+    
     /* Nav */
     .nav{
       position: sticky; top:0; z-index: 50;
@@ -531,7 +569,10 @@
           <a class="btn primary" href="#gallery">View Gallery</a>
           <a class="btn" href="#weekly-goal">Current Focus</a>
           <a class="btn" href="#downloads">Download Materials</a>
-          <a class="btn primary" href="quiz.html">Try the Quiz Lab</a>
+          <a class="btn feature-quiz-btn" href="quiz.html">
+              <span class="feature-quiz-label">Try our new feature</span>
+              <span class="feature-quiz-title">Try the Quiz Lab</span>
+          </a>
         </div>
       </div>
 
