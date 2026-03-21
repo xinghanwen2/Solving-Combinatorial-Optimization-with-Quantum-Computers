@@ -1,0 +1,950 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quantum Quiz Lab — Optimization with QAOA</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a33;
+      --text:#e9eefc;
+      --muted:#b8c3e6;
+      --line:rgba(255,255,255,0.12);
+      --accent:#7aa2ff;
+      --accent2:#4de3c2;
+      --good:#55d38a;
+      --bad:#ff7c95;
+      --warn:#ffd166;
+    }
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(122,162,255,0.25), transparent 55%),
+                  radial-gradient(1000px 500px at 80% 10%, rgba(77,227,194,0.18), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+    a{ color:var(--text); }
+    .container{ max-width:1100px; margin:0 auto; padding:0 18px; }
+
+    .nav{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,0.68);
+      border-bottom:1px solid var(--line);
+    }
+    .nav-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:12px 0;
+    }
+    .brand{ display:flex; flex-direction:column; font-weight:700; }
+    .brand small{ color:var(--muted); font-weight:500; }
+    .links{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .links a{
+      text-decoration:none; color:var(--muted);
+      padding:8px 10px; border-radius:10px; border:1px solid transparent;
+    }
+    .links a:hover{ color:var(--text); border-color:var(--line); background:rgba(255,255,255,0.04); }
+
+    .hero{ padding:40px 0 22px; }
+    .hero-grid{ display:grid; gap:18px; grid-template-columns:1.2fr .8fr; }
+    @media (max-width: 900px){ .hero-grid{ grid-template-columns:1fr; } }
+    .card{
+      background: rgba(15,26,51,0.74);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:18px;
+      box-shadow:0 12px 40px rgba(0,0,0,0.22);
+    }
+    h1{ margin:0 0 10px; font-size:34px; line-height:1.12; }
+    h2{ margin:0; font-size:22px; }
+    .subtitle{ color:var(--muted); margin:0 0 14px; }
+    .pillrow{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .pill{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); color:var(--muted); background:rgba(255,255,255,0.03);
+    }
+    .btnrow{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 13px; border-radius:12px; text-decoration:none;
+      border:1px solid var(--line); background:rgba(255,255,255,0.04);
+      color:var(--text); font-weight:600; cursor:pointer;
+    }
+    .btn.primary{
+      border-color:rgba(122,162,255,0.5);
+      background:linear-gradient(135deg, rgba(122,162,255,0.25), rgba(77,227,194,0.12));
+    }
+    .btn.good{ border-color:rgba(85,211,138,0.4); background:rgba(85,211,138,0.12); }
+    .btn:hover{ filter:brightness(1.05); }
+
+    section{ padding:16px 0; }
+    .section-title{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:0 0 12px; }
+    .hint{ color:var(--muted); font-size:13px; }
+
+    .controls-grid{ display:grid; gap:14px; grid-template-columns:1fr 1fr 1fr; }
+    @media (max-width: 900px){ .controls-grid{ grid-template-columns:1fr; } }
+
+    .difficulty-grid{ display:grid; gap:12px; grid-template-columns:repeat(3,1fr); }
+    @media (max-width: 900px){ .difficulty-grid{ grid-template-columns:1fr; } }
+    .difficulty-card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      background:rgba(255,255,255,0.03);
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .difficulty-card:hover{ transform:translateY(-2px); border-color:rgba(122,162,255,0.45); }
+    .difficulty-card.selected{
+      border-color:rgba(122,162,255,0.55);
+      background:linear-gradient(135deg, rgba(122,162,255,0.14), rgba(77,227,194,0.08));
+    }
+    .difficulty-card .level{ font-size:18px; font-weight:700; margin-bottom:6px; }
+    .muted{ color:var(--muted); }
+    .mini{ font-size:13px; color:var(--muted); }
+
+    .quiz-shell{ display:grid; gap:18px; grid-template-columns:1fr 320px; align-items:start; }
+    @media (max-width: 980px){ .quiz-shell{ grid-template-columns:1fr; } }
+
+    .stats{
+      display:grid; gap:10px; grid-template-columns:repeat(3,1fr);
+      margin-bottom:14px;
+    }
+    .stat{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:rgba(255,255,255,0.03);
+    }
+    .stat-label{ color:var(--muted); font-size:12px; margin-bottom:4px; }
+    .stat-value{ font-size:22px; font-weight:700; }
+
+    .question-card{ min-height: 420px; }
+    .question-number{ color:var(--muted); font-size:14px; margin-bottom:8px; }
+    .question-text{ font-size:24px; line-height:1.35; margin-bottom:16px; }
+    .answers{ display:grid; gap:10px; }
+    .answer{
+      text-align:left;
+      width:100%;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,0.03);
+      color:var(--text);
+      padding:14px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      font:inherit;
+      transition: border-color .12s ease, transform .12s ease, background .12s ease;
+    }
+    .answer:hover:not(:disabled){ transform:translateY(-1px); border-color:rgba(122,162,255,0.4); }
+    .answer.correct{ border-color:rgba(85,211,138,0.5); background:rgba(85,211,138,0.16); }
+    .answer.wrong{ border-color:rgba(255,124,149,0.5); background:rgba(255,124,149,0.13); }
+    .answer:disabled{ cursor:default; }
+
+    .feedback{
+      margin-top:16px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:rgba(255,255,255,0.03);
+      display:none;
+    }
+    .feedback.show{ display:block; }
+    .feedback.good{ border-color:rgba(85,211,138,0.42); background:rgba(85,211,138,0.10); }
+    .feedback.bad{ border-color:rgba(255,124,149,0.42); background:rgba(255,124,149,0.10); }
+    .feedback-title{ font-weight:700; margin-bottom:6px; }
+
+    .side-panel .card + .card{ margin-top:14px; }
+    .bank-list{ margin:10px 0 0 18px; color:var(--muted); }
+    .bank-list li{ margin-bottom:6px; }
+
+    .progress-wrap{
+      height:10px; background:rgba(255,255,255,0.06);
+      border-radius:999px; overflow:hidden; border:1px solid var(--line);
+    }
+    .progress-bar{
+      height:100%; width:0%;
+      background:linear-gradient(90deg, rgba(122,162,255,0.9), rgba(77,227,194,0.8));
+      transition: width .2s ease;
+    }
+
+    .hidden{ display:none !important; }
+
+    .results-grid{ display:grid; gap:12px; grid-template-columns:repeat(3,1fr); margin-bottom:14px; }
+    @media (max-width: 900px){ .results-grid{ grid-template-columns:1fr; } }
+    .result-pill{ border:1px solid var(--line); border-radius:16px; padding:14px; background:rgba(255,255,255,0.03); }
+
+    .review-item{
+      border:1px solid var(--line); border-radius:16px; padding:14px; background:rgba(255,255,255,0.03);
+    }
+    .review-item + .review-item{ margin-top:12px; }
+
+    footer{
+      padding:26px 0 36px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      margin-top:16px;
+    }
+
+    /* Live2D assistant */
+    #assistant-layer{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 340px;
+      height: 420px;
+      z-index: 90;
+      pointer-events: none;
+    }
+    #assistant-stage{
+      width: 100%; height: 100%; position: absolute; right: 0; bottom: 0;
+      overflow: visible; z-index: 1;
+    }
+    #assistant-bubble{
+      position:absolute; right:130px; bottom:220px; max-width:220px;
+      background:rgba(255,255,255,0.95); color:#182033; border-radius:16px;
+      padding:10px 12px; font-size:13px; line-height:1.35;
+      box-shadow:0 10px 24px rgba(0,0,0,0.24);
+      pointer-events:none; cursor:pointer; z-index:4;
+      opacity:0; transform:translateY(8px);
+      transition:opacity .35s ease, transform .35s ease;
+    }
+    #assistant-bubble.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+    #assistant-bubble::after{
+      content:""; position:absolute; right:26px; bottom:-8px; width:16px; height:16px;
+      background:rgba(255,255,255,0.95); transform:rotate(45deg);
+    }
+
+    @media (max-width: 900px){
+      #assistant-layer{ width:220px; height:300px; right:8px; bottom:8px; }
+      #assistant-bubble{ right:60px; bottom:185px; max-width:165px; font-size:12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        Quantum Quiz Lab
+        <small>Capstone • Qiskit • IBM • Interactive Practice</small>
+      </div>
+      <div class="links">
+        <a href="index.html">Back to Main Site</a>
+        <a href="#choose">Choose Difficulty</a>
+        <a href="#quiz-area">Quiz Area</a>
+        <a href="#results">Results</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container hero">
+    <div class="hero-grid">
+      <div class="card">
+        <h1>Quantum Quiz Lab</h1>
+        <p class="subtitle">
+          Test your understanding of quantum computing, QAOA, Max-Cut, gates, measurement, and circuit reasoning.
+          Each quiz uses a difficulty-based question bank and randomly pulls a fresh set of questions each time.
+        </p>
+        <div class="pillrow">
+          <div class="pill">Randomized Question Banks</div>
+          <div class="pill">Easy / Medium / Hard</div>
+          <div class="pill">Instant Feedback</div>
+          <div class="pill">Score + Review</div>
+        </div>
+        <div class="btnrow">
+          <a class="btn primary" href="#choose">Start a Quiz</a>
+          <a class="btn" href="index.html">Return to Main Website</a>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">How this page works</div>
+        <div class="muted">
+          Choose a difficulty, start a new randomized quiz, answer one question at a time, and review your results at the end.
+          The assistant in the corner can still wave at visitors and helps keep the page visually consistent with your main site.
+        </div>
+        <hr style="border:none;border-top:1px solid var(--line);margin:14px 0;">
+        <div style="font-weight:700; margin-bottom:8px;">Question counts</div>
+        <div class="muted">
+          Easy pulls 5 questions, Medium pulls 6, and Hard pulls 7 from separate question banks.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <section id="choose">
+      <div class="section-title">
+        <h2>Choose a Difficulty</h2>
+        <div class="hint">Each level uses a separate randomized question bank.</div>
+      </div>
+      <div class="difficulty-grid" id="difficulty-grid">
+        <div class="difficulty-card selected" data-difficulty="easy">
+          <div class="level">Easy</div>
+          <div class="muted">Foundations: qubits, superposition, gates, measurement, and basic QAOA vocabulary.</div>
+          <div class="mini" style="margin-top:10px;">5 questions per attempt</div>
+        </div>
+        <div class="difficulty-card" data-difficulty="medium">
+          <div class="level">Medium</div>
+          <div class="muted">Circuit reasoning, Max-Cut encoding, operator purpose, and interpretation of outcomes.</div>
+          <div class="mini" style="margin-top:10px;">6 questions per attempt</div>
+        </div>
+        <div class="difficulty-card" data-difficulty="hard">
+          <div class="level">Hard</div>
+          <div class="muted">More detailed QAOA logic, Hamiltonian ideas, gate decomposition, and algorithm workflow.</div>
+          <div class="mini" style="margin-top:10px;">7 questions per attempt</div>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="btn primary" id="start-quiz-btn" type="button">Start New Quiz</button>
+      </div>
+    </section>
+
+    <section id="quiz-area" class="quiz-shell">
+      <div>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Difficulty</div>
+            <div class="stat-value" id="stat-difficulty">Easy</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Score</div>
+            <div class="stat-value" id="stat-score">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Progress</div>
+            <div class="stat-value" id="stat-progress">0 / 0</div>
+          </div>
+        </div>
+
+        <div class="card question-card" id="question-card">
+          <div class="question-number" id="question-number">Choose a difficulty and start the quiz.</div>
+          <div class="question-text" id="question-text">Your question will appear here.</div>
+          <div class="progress-wrap" style="margin-bottom:16px;">
+            <div class="progress-bar" id="progress-bar"></div>
+          </div>
+          <div class="answers" id="answers"></div>
+          <div class="feedback" id="feedback">
+            <div class="feedback-title" id="feedback-title"></div>
+            <div id="feedback-text"></div>
+          </div>
+          <div class="btnrow" style="margin-top:16px;">
+            <button class="btn good hidden" id="next-btn" type="button">Next Question</button>
+            <button class="btn hidden" id="finish-btn" type="button">See Results</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-panel">
+        <div class="card">
+          <div style="font-weight:700; margin-bottom:8px;">What’s inside each bank</div>
+          <ul class="bank-list">
+            <li>Easy: definitions and basic intuition.</li>
+            <li>Medium: applying concepts to circuits and graph problems.</li>
+            <li>Hard: detailed reasoning about QAOA structure and implementation.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div style="font-weight:700; margin-bottom:8px;">Quiz design notes</div>
+          <div class="muted">
+            Questions are sampled randomly without repetition during one attempt. When you start again, you may get a different set.
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-weight:700; margin-bottom:8px;">Tip</div>
+          <div class="muted">
+            If you are new to the topic, begin with Easy, then move up after you are comfortable with gates, qubits, and Max-Cut basics.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="results">
+      <div class="section-title">
+        <h2>Results</h2>
+        <div class="hint">Shown after you finish an attempt.</div>
+      </div>
+
+      <div class="card hidden" id="results-card">
+        <div class="results-grid">
+          <div class="result-pill">
+            <div class="stat-label">Final Score</div>
+            <div class="stat-value" id="final-score">0 / 0</div>
+          </div>
+          <div class="result-pill">
+            <div class="stat-label">Percentage</div>
+            <div class="stat-value" id="final-percent">0%</div>
+          </div>
+          <div class="result-pill">
+            <div class="stat-label">Difficulty</div>
+            <div class="stat-value" id="final-difficulty">Easy</div>
+          </div>
+        </div>
+        <div id="results-summary" class="muted" style="margin-bottom:14px;"></div>
+        <div class="btnrow" style="margin-bottom:16px;">
+          <button class="btn primary" id="retry-btn" type="button">Try Another Quiz</button>
+          <a class="btn" href="#choose">Back to Difficulty Selector</a>
+        </div>
+        <div id="review-list"></div>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> Quantum Quiz Lab • Built for the capstone website by Hanwen Xing and team.
+    </footer>
+  </div>
+
+  <div id="assistant-layer" aria-hidden="true">
+    <div id="assistant-bubble"></div>
+    <div id="assistant-stage"></div>
+  </div>
+
+  <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pixi.js@6/dist/browser/pixi.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/cubism4.min.js"></script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const QUESTION_BANK = {
+      easy: [
+        {
+          question: "What is a qubit?",
+          options: [
+            "A classical bit that can only be 0 or 1",
+            "A quantum unit of information that can exist in a superposition of 0 and 1",
+            "A type of quantum gate",
+            "A measurement result only"
+          ],
+          answer: 1,
+          explanation: "A qubit is the basic quantum information unit. Unlike a classical bit, it can be in a superposition of basis states."
+        },
+        {
+          question: "Which gate is commonly used to create superposition from |0⟩?",
+          options: ["X gate", "Z gate", "Hadamard gate", "SWAP gate"],
+          answer: 2,
+          explanation: "The Hadamard gate maps |0⟩ to an equal superposition of |0⟩ and |1⟩."
+        },
+        {
+          question: "In a Max-Cut problem, what is the goal?",
+          options: [
+            "Minimize the number of graph nodes",
+            "Split nodes into two groups to maximize edges crossing between them",
+            "Delete all edges from the graph",
+            "Find the shortest path between two nodes"
+          ],
+          answer: 1,
+          explanation: "Max-Cut seeks a partition of the graph so that as many edges as possible cross between the two sets."
+        },
+        {
+          question: "What does measurement do in a quantum circuit?",
+          options: [
+            "Makes the circuit longer",
+            "Turns a quantum state into a classical outcome",
+            "Creates more qubits",
+            "Removes all gates"
+          ],
+          answer: 1,
+          explanation: "Measurement converts the quantum state into classical bits according to the probability distribution of outcomes."
+        },
+        {
+          question: "In QAOA, what is the classical optimizer mainly used for?",
+          options: [
+            "To draw circuit diagrams",
+            "To tune parameters like γ and β",
+            "To replace the quantum circuit entirely",
+            "To measure qubits faster"
+          ],
+          answer: 1,
+          explanation: "QAOA is hybrid: the quantum part generates candidate solutions, and the classical optimizer tunes γ and β."
+        },
+        {
+          question: "Which of the following is a basic Pauli gate?",
+          options: ["X", "H", "T", "CNOT"],
+          answer: 0,
+          explanation: "X is one of the Pauli gates, along with Y and Z."
+        },
+        {
+          question: "Why is QAOA called a hybrid algorithm?",
+          options: [
+            "Because it uses both quantum and classical computation",
+            "Because it uses both laptops and phones",
+            "Because it mixes two programming languages",
+            "Because it works only on hybrid clouds"
+          ],
+          answer: 0,
+          explanation: "QAOA combines a parameterized quantum circuit with a classical optimization loop."
+        },
+        {
+          question: "In a bitstring used for Max-Cut, what do 0 and 1 usually represent?",
+          options: [
+            "Gate types",
+            "Two different partitions of the graph",
+            "Measurement speed",
+            "Noise levels"
+          ],
+          answer: 1,
+          explanation: "Each bit usually indicates which side of the cut a node belongs to."
+        }
+      ],
+      medium: [
+        {
+          question: "Why is the QAOA cost operator for Max-Cut built from Z-type terms?",
+          options: [
+            "Because Z operators encode whether qubit basis values agree or differ",
+            "Because X gates cannot be used on hardware",
+            "Because Z gates always reduce noise",
+            "Because Y gates are not allowed in Qiskit"
+          ],
+          answer: 0,
+          explanation: "The Max-Cut objective depends on whether connected nodes are assigned different bit values, and Z-basis structure captures that relationship cleanly."
+        },
+        {
+          question: "What is the main role of the mixer operator U(B,β) in QAOA?",
+          options: [
+            "To permanently measure the state",
+            "To explore the space of possible solutions",
+            "To remove the cost Hamiltonian",
+            "To relabel graph nodes"
+          ],
+          answer: 1,
+          explanation: "The mixer encourages exploration across different candidate bitstrings instead of staying fixed in one configuration."
+        },
+        {
+          question: "Why do people often test QAOA on small graphs first?",
+          options: [
+            "Small graphs make it easier to verify correctness and interpret results",
+            "Large graphs are illegal in Qiskit",
+            "Small graphs always give perfect cuts",
+            "Only small graphs can be drawn"
+          ],
+          answer: 0,
+          explanation: "Small graphs are manageable benchmark cases and help confirm the implementation before scaling up."
+        },
+        {
+          question: "If a measured bitstring is 0101 for a 4-node graph, what does it represent?",
+          options: [
+            "The graph has 101 nodes",
+            "An assignment of each node to one of two partitions",
+            "The total number of circuit layers",
+            "A list of four quantum gates"
+          ],
+          answer: 1,
+          explanation: "The bitstring encodes a partition choice for each node, which can then be evaluated as a cut."
+        },
+        {
+          question: "Why are repeated shots useful when running a quantum circuit?",
+          options: [
+            "They produce a distribution of outcomes rather than a single sample",
+            "They permanently increase qubit count",
+            "They remove all noise",
+            "They automatically optimize γ and β"
+          ],
+          answer: 0,
+          explanation: "Multiple shots let you estimate the probability distribution of measurement outcomes."
+        },
+        {
+          question: "What is one practical way to implement parts of the QAOA cost unitary on hardware?",
+          options: [
+            "Using CNOTs and rotation gates",
+            "Using only measurement gates",
+            "Using no gates at all",
+            "Using classical loops instead of quantum operations"
+          ],
+          answer: 0,
+          explanation: "In practice, diagonal cost terms are often decomposed using CNOTs and rotations."
+        },
+        {
+          question: "What is the benefit of comparing QAOA results to benchmark graph instances?",
+          options: [
+            "It helps check whether the implementation behaves reasonably",
+            "It guarantees quantum advantage immediately",
+            "It removes the need for analysis",
+            "It makes the circuit run without parameters"
+          ],
+          answer: 0,
+          explanation: "Benchmarks provide reference behavior and make debugging and evaluation easier."
+        },
+        {
+          question: "In a hybrid workflow, what usually happens after the quantum circuit is run?",
+          options: [
+            "The classical optimizer updates parameters based on results",
+            "All previous data is deleted",
+            "The hardware chooses the final answer automatically",
+            "The graph is replaced by a matrix at random"
+          ],
+          answer: 0,
+          explanation: "Measurement outcomes are used to estimate objective quality, and the classical optimizer updates the parameters."
+        }
+      ],
+      hard: [
+        {
+          question: "Why does the QAOA cost unitary for Max-Cut assign different phases to different computational basis states?",
+          options: [
+            "Because each basis state corresponds to a candidate cut with its own objective value",
+            "Because all basis states must always be treated identically",
+            "Because the mixer forces equal phases",
+            "Because measurement already decided the cut"
+          ],
+          answer: 0,
+          explanation: "The cost Hamiltonian encodes the objective, so candidate cuts receive phases related to how good they are under the Max-Cut objective."
+        },
+        {
+          question: "What is the main reason the cost Hamiltonian for Max-Cut is diagonal in the computational basis?",
+          options: [
+            "It is built from Z-type operators, whose eigenstates are computational basis states",
+            "It is made only from Hadamard gates",
+            "It contains no graph information",
+            "It measures qubits directly"
+          ],
+          answer: 0,
+          explanation: "Z operators are diagonal in the computational basis, so sums and products of them remain diagonal there."
+        },
+        {
+          question: "Why is parameter optimization still difficult in QAOA even after the circuit structure is fixed?",
+          options: [
+            "Because the objective landscape over γ and β can be nontrivial and problem-dependent",
+            "Because γ and β are always integers",
+            "Because the circuit no longer depends on the graph",
+            "Because optimization is forbidden after one run"
+          ],
+          answer: 0,
+          explanation: "Even with a fixed ansatz, finding good parameters can be challenging because the landscape varies by problem and depth."
+        },
+        {
+          question: "Why is it useful to study gate identities and tensor products before implementing QAOA?",
+          options: [
+            "They explain how operators extend from one qubit to many and how circuit terms are constructed",
+            "They replace the need for coding entirely",
+            "They eliminate the need for optimization",
+            "They make measurement unnecessary"
+          ],
+          answer: 0,
+          explanation: "QAOA uses structured multi-qubit operators, so understanding tensor products and gate relationships is foundational."
+        },
+        {
+          question: "In a practical capstone workflow, why would simulation usually come before hardware execution?",
+          options: [
+            "Simulation helps verify logic and debug the circuit before dealing with hardware noise and limits",
+            "Because hardware cannot run QAOA",
+            "Because simulators automatically solve Max-Cut exactly",
+            "Because hardware does not support measurement"
+          ],
+          answer: 0,
+          explanation: "Simulation is ideal for correctness checks and interpretation before running more fragile hardware experiments."
+        },
+        {
+          question: "What is one reason increasing QAOA depth p can be both promising and difficult?",
+          options: [
+            "It may improve expressiveness but also increases circuit complexity and tuning difficulty",
+            "It always makes the problem classical",
+            "It removes the need for a graph",
+            "It guarantees an exact answer with one shot"
+          ],
+          answer: 0,
+          explanation: "More layers can represent richer solutions, but they also increase optimization complexity and circuit cost."
+        },
+        {
+          question: "Why do researchers often evaluate both the best bitstring found and the overall distribution of outcomes?",
+          options: [
+            "Because one good sample and the broader behavior of the circuit both matter for judging performance",
+            "Because only the worst outcome matters",
+            "Because distributions are unrelated to quantum circuits",
+            "Because QAOA never returns repeated outcomes"
+          ],
+          answer: 0,
+          explanation: "A single best result is useful, but the overall distribution also reveals how consistently the circuit produces strong candidates."
+        },
+        {
+          question: "What makes benchmarking especially valuable in a student project implementing QAOA for Max-Cut?",
+          options: [
+            "It provides manageable reference cases for correctness, comparison, and explanation",
+            "It guarantees publication-quality quantum advantage",
+            "It removes the need for theory",
+            "It prevents all implementation bugs"
+          ],
+          answer: 0,
+          explanation: "Benchmarks help validate the implementation and make the project’s results easier to interpret and present."
+        },
+        {
+          question: "Why is the alternation between cost and mixer layers essential in QAOA?",
+          options: [
+            "The cost layer biases toward good solutions while the mixer enables exploration of other possibilities",
+            "Because two layers are required by HTML",
+            "Because cost layers alone already search all states uniformly",
+            "Because mixer layers are only decorative"
+          ],
+          answer: 0,
+          explanation: "The alternation balances exploitation of the objective with exploration of the solution space."
+        }
+      ]
+    };
+
+    const QUIZ_LENGTHS = { easy: 5, medium: 6, hard: 7 };
+    let selectedDifficulty = "easy";
+    let currentQuiz = [];
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+    let reviewData = [];
+
+    const difficultyGrid = document.getElementById("difficulty-grid");
+    const difficultyCards = [...document.querySelectorAll(".difficulty-card")];
+    const startQuizBtn = document.getElementById("start-quiz-btn");
+    const statDifficulty = document.getElementById("stat-difficulty");
+    const statScore = document.getElementById("stat-score");
+    const statProgress = document.getElementById("stat-progress");
+    const questionNumber = document.getElementById("question-number");
+    const questionText = document.getElementById("question-text");
+    const answersEl = document.getElementById("answers");
+    const feedback = document.getElementById("feedback");
+    const feedbackTitle = document.getElementById("feedback-title");
+    const feedbackText = document.getElementById("feedback-text");
+    const nextBtn = document.getElementById("next-btn");
+    const finishBtn = document.getElementById("finish-btn");
+    const progressBar = document.getElementById("progress-bar");
+    const resultsCard = document.getElementById("results-card");
+    const finalScore = document.getElementById("final-score");
+    const finalPercent = document.getElementById("final-percent");
+    const finalDifficulty = document.getElementById("final-difficulty");
+    const resultsSummary = document.getElementById("results-summary");
+    const reviewList = document.getElementById("review-list");
+    const retryBtn = document.getElementById("retry-btn");
+
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function pickQuestions(difficulty) {
+      return shuffle(QUESTION_BANK[difficulty]).slice(0, QUIZ_LENGTHS[difficulty]);
+    }
+
+    function updateStats() {
+      statDifficulty.textContent = selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1);
+      statScore.textContent = score;
+      statProgress.textContent = currentQuiz.length ? `${Math.min(currentIndex + 1, currentQuiz.length)} / ${currentQuiz.length}` : "0 / 0";
+      const progress = currentQuiz.length ? (currentIndex / currentQuiz.length) * 100 : 0;
+      progressBar.style.width = `${progress}%`;
+    }
+
+    function renderQuestion() {
+      const q = currentQuiz[currentIndex];
+      answered = false;
+      feedback.className = "feedback";
+      feedbackTitle.textContent = "";
+      feedbackText.textContent = "";
+      nextBtn.classList.add("hidden");
+      finishBtn.classList.add("hidden");
+
+      questionNumber.textContent = `Question ${currentIndex + 1} of ${currentQuiz.length}`;
+      questionText.textContent = q.question;
+      answersEl.innerHTML = "";
+      updateStats();
+      progressBar.style.width = `${(currentIndex / currentQuiz.length) * 100}%`;
+
+      q.options.forEach((option, index) => {
+        const btn = document.createElement("button");
+        btn.className = "answer";
+        btn.type = "button";
+        btn.textContent = option;
+        btn.addEventListener("click", () => handleAnswer(index, btn));
+        answersEl.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(choiceIndex, clickedBtn) {
+      if (answered) return;
+      answered = true;
+
+      const q = currentQuiz[currentIndex];
+      const buttons = [...document.querySelectorAll(".answer")];
+      const isCorrect = choiceIndex === q.answer;
+
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === q.answer) btn.classList.add("correct");
+        if (idx === choiceIndex && idx !== q.answer) btn.classList.add("wrong");
+      });
+
+      if (isCorrect) {
+        score += 1;
+        feedback.classList.add("show", "good");
+        feedbackTitle.textContent = "Correct";
+      } else {
+        feedback.classList.add("show", "bad");
+        feedbackTitle.textContent = "Not quite";
+      }
+
+      feedbackText.textContent = `${q.explanation} Correct answer: ${q.options[q.answer]}`;
+      statScore.textContent = score;
+
+      reviewData.push({
+        question: q.question,
+        yourAnswer: q.options[choiceIndex],
+        correctAnswer: q.options[q.answer],
+        correct: isCorrect,
+        explanation: q.explanation
+      });
+
+      if (currentIndex === currentQuiz.length - 1) {
+        finishBtn.classList.remove("hidden");
+      } else {
+        nextBtn.classList.remove("hidden");
+      }
+    }
+
+    function startQuiz() {
+      currentQuiz = pickQuestions(selectedDifficulty);
+      currentIndex = 0;
+      score = 0;
+      reviewData = [];
+      resultsCard.classList.add("hidden");
+      renderQuestion();
+      document.getElementById("quiz-area").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function goNext() {
+      currentIndex += 1;
+      renderQuestion();
+    }
+
+    function showResults() {
+      progressBar.style.width = "100%";
+      finalScore.textContent = `${score} / ${currentQuiz.length}`;
+      finalPercent.textContent = `${Math.round((score / currentQuiz.length) * 100)}%`;
+      finalDifficulty.textContent = selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1);
+
+      let summaryText = "";
+      const percent = Math.round((score / currentQuiz.length) * 100);
+      if (percent >= 85) summaryText = "Excellent work. You showed a strong understanding of the quiz topics for this difficulty.";
+      else if (percent >= 65) summaryText = "Nice job. You have a solid foundation, with a few areas worth reviewing.";
+      else summaryText = "Good start. Review the explanations below, then try another round for more practice.";
+      resultsSummary.textContent = summaryText;
+
+      reviewList.innerHTML = reviewData.map((item, idx) => `
+        <div class="review-item">
+          <div style="font-weight:700; margin-bottom:6px;">${idx + 1}. ${item.question}</div>
+          <div class="muted" style="margin-bottom:6px;">Your answer: ${item.yourAnswer}</div>
+          <div class="muted" style="margin-bottom:6px;">Correct answer: ${item.correctAnswer}</div>
+          <div class="muted">Explanation: ${item.explanation}</div>
+        </div>
+      `).join("");
+
+      resultsCard.classList.remove("hidden");
+      document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    difficultyCards.forEach(card => {
+      card.addEventListener("click", () => {
+        difficultyCards.forEach(c => c.classList.remove("selected"));
+        card.classList.add("selected");
+        selectedDifficulty = card.dataset.difficulty;
+        statDifficulty.textContent = selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1);
+      });
+    });
+
+    startQuizBtn.addEventListener("click", startQuiz);
+    nextBtn.addEventListener("click", goNext);
+    finishBtn.addEventListener("click", showResults);
+    retryBtn.addEventListener("click", startQuiz);
+    updateStats();
+
+    /* Live2D assistant */
+    const assistantBubble = document.getElementById("assistant-bubble");
+    const bubbleMessages = [
+      "Ready for a quantum quiz?",
+      "Try Easy first if you want a warm-up.",
+      "See if you can beat your last score.",
+      "Max-Cut and QAOA questions are waiting.",
+      "You can restart for a new random set."
+    ];
+
+    function showBubbleMessage(text) {
+      assistantBubble.textContent = text;
+      assistantBubble.classList.add("show");
+      setTimeout(() => assistantBubble.classList.remove("show"), 3600);
+    }
+
+    function scheduleBubble() {
+      const delay = Math.random() * 9000 + 9000;
+      setTimeout(() => {
+        const randomMessage = bubbleMessages[Math.floor(Math.random() * bubbleMessages.length)];
+        showBubbleMessage(randomMessage);
+        scheduleBubble();
+      }, delay);
+    }
+
+    setTimeout(() => {
+      showBubbleMessage("Welcome to the quiz lab.");
+      scheduleBubble();
+    }, 2200);
+
+    (function () {
+      const assistantStage = document.getElementById("assistant-stage");
+      if (!assistantStage) return;
+
+      const assistantApp = new PIXI.Application({
+        width: assistantStage.clientWidth || 320,
+        height: assistantStage.clientHeight || 420,
+        backgroundAlpha: 0,
+        antialias: true
+      });
+
+      assistantStage.appendChild(assistantApp.view);
+
+      const modelPath = "assets/live2d/仟云桥.model3.json";
+
+      PIXI.live2d.Live2DModel.from(modelPath)
+        .then(model => {
+          assistantApp.stage.addChild(model);
+          model.x = assistantApp.view.width * 0.5;
+          model.y = assistantApp.view.height * 0.98;
+          model.anchor.set(0.5, 1);
+
+          let targetX = 0;
+          let targetY = 0;
+          let currentX = 0;
+          let currentY = 0;
+
+          window.addEventListener("mousemove", (e) => {
+            const nx = (e.clientX / window.innerWidth) * 2 - 1;
+            const ny = (e.clientY / window.innerHeight) * 2 - 1;
+            targetX = nx * 0.35;
+            targetY = -ny * 0.25;
+          });
+
+          assistantApp.ticker.add(() => {
+            currentX += (targetX - currentX) * 0.06;
+            currentY += (targetY - currentY) * 0.06;
+            if (model.internalModel && model.internalModel.focusController) {
+              model.internalModel.focusController.focus(currentX, currentY, false);
+            }
+          });
+
+          function resizeAssistant() {
+            const w = assistantStage.clientWidth || 320;
+            const h = assistantStage.clientHeight || 420;
+            assistantApp.renderer.resize(w, h);
+            model.x = w * 0.5;
+            model.y = h * 0.98;
+            if (window.innerWidth <= 900) model.scale.set(0.05);
+            else model.scale.set(0.07);
+          }
+
+          window.addEventListener("resize", resizeAssistant);
+          resizeAssistant();
+        })
+        .catch(err => {
+          console.error("Failed to load assistant model:", err);
+        });
+    })();
+  </script>
+</body>
+</html>
