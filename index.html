@@ -232,6 +232,107 @@
       font-size:13px;
     }
 
+    /* Slideshow */
+    .slideshow-section{
+      padding: 10px 0 20px;
+    }
+    
+    .slideshow-card{
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(15,26,51,0.72);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+    }
+    
+    .slideshow-track{
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      min-height: 320px;
+      background: rgba(255,255,255,0.02);
+    }
+    
+    .slide{
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity .6s ease;
+    }
+    
+    .slide.active{
+      opacity: 1;
+    }
+    
+    .slide img{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: rgba(0,0,0,0.18);
+    }
+    
+    .slide-caption{
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      background: rgba(11,18,32,0.72);
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+    
+    .slideshow-controls{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-top: 1px solid var(--line);
+    }
+    
+    .slideshow-buttons{
+      display: flex;
+      gap: 8px;
+    }
+    
+    .slide-btn{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .slide-btn:hover{
+      filter: brightness(1.06);
+    }
+    
+    .slide-dots{
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .slide-dot{
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    
+    .slide-dot.active{
+      background: var(--accent);
+    }
+    
     /* Gallery */
     .gallery{
       display:grid;
@@ -592,6 +693,56 @@
         </div>
       </div>
     </div>
+
+    <section class="slideshow-section" id="project-slideshow">
+      <div class="section-title">
+        <h2>Project Slideshow</h2>
+        <div class="hint">A quick visual overview of our progress</div>
+      </div>
+    
+      <div class="slideshow-card">
+        <div class="slideshow-track" id="slideshow-track">
+          <div class="slide active">
+            <img src="assets/img/picture1.jpg" alt="Project slideshow image 1">
+            <div class="slide-caption">Project Image 1</div>
+          </div>
+          <div class="slide">
+            <img src="assets/img/picture2.jpg" alt="Project slideshow image 2">
+            <div class="slide-caption">Project Image 2</div>
+          </div>
+          <div class="slide">
+            <img src="assets/img/picture3.jpg" alt="Project slideshow image 3">
+            <div class="slide-caption">Project Image 3</div>
+          </div>
+          <div class="slide">
+            <img src="assets/img/picture4.jpg" alt="Project slideshow image 4">
+            <div class="slide-caption">Project Image 4</div>
+          </div>
+          <div class="slide">
+            <img src="assets/img/picture5.jpg" alt="Project slideshow image 5">
+            <div class="slide-caption">Project Image 5</div>
+          </div>
+          <div class="slide">
+            <img src="assets/img/picture6.jpg" alt="Project slideshow image 6">
+            <div class="slide-caption">Project Image 6</div>
+          </div>
+          <div class="slide">
+            <img src="assets/img/picture7.jpg" alt="Project slideshow image 7">
+            <div class="slide-caption">Project Image 7</div>
+          </div>
+        </div>
+    
+        <div class="slideshow-controls">
+          <div class="slideshow-buttons">
+            <button class="slide-btn" id="prev-slide" type="button">Previous</button>
+            <button class="slide-btn" id="next-slide" type="button">Next</button>
+          </div>
+          <div class="slide-dots" id="slide-dots"></div>
+        </div>
+      </div>
+    </section>
+
+    
 
     <section id="work">
       <div class="section-title">
@@ -1315,6 +1466,72 @@
           window.addEventListener("resize", resizeAssistant);
           resizeAssistant();
         })
+        /* Slideshow */
+        const slides = document.querySelectorAll(".slide");
+        const prevSlideBtn = document.getElementById("prev-slide");
+        const nextSlideBtn = document.getElementById("next-slide");
+        const slideDotsContainer = document.getElementById("slide-dots");
+        
+        let currentSlide = 0;
+        let slideInterval;
+        
+        function showSlide(index) {
+          slides.forEach((slide, i) => {
+            slide.classList.toggle("active", i === index);
+          });
+        
+          const dots = document.querySelectorAll(".slide-dot");
+          dots.forEach((dot, i) => {
+            dot.classList.toggle("active", i === index);
+          });
+        
+          currentSlide = index;
+        }
+        
+        function nextSlide() {
+          const nextIndex = (currentSlide + 1) % slides.length;
+          showSlide(nextIndex);
+        }
+        
+        function prevSlide() {
+          const prevIndex = (currentSlide - 1 + slides.length) % slides.length;
+          showSlide(prevIndex);
+        }
+        
+        function startSlideShow() {
+          slideInterval = setInterval(nextSlide, 3500);
+        }
+        
+        function resetSlideShow() {
+          clearInterval(slideInterval);
+          startSlideShow();
+        }
+        
+        slides.forEach((_, i) => {
+          const dot = document.createElement("button");
+          dot.className = "slide-dot";
+          dot.type = "button";
+          dot.setAttribute("aria-label", `Go to slide ${i + 1}`);
+          dot.addEventListener("click", () => {
+            showSlide(i);
+            resetSlideShow();
+          });
+          slideDotsContainer.appendChild(dot);
+        });
+        
+        prevSlideBtn.addEventListener("click", () => {
+          prevSlide();
+          resetSlideShow();
+        });
+        
+        nextSlideBtn.addEventListener("click", () => {
+          nextSlide();
+          resetSlideShow();
+        });
+        
+        showSlide(0);
+        startSlideShow();
+        
         .catch(err => {
           console.error("Failed to load assistant model:", err);
           showBubbleMessage("I loaded the page, but the Live2D model failed to load.");
