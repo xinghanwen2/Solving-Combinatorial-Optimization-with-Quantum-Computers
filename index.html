@@ -1470,73 +1470,74 @@
           console.error("Failed to load assistant model:", err);
           showBubbleMessage("I loaded the page, but the Live2D model failed to load.");
         });
-        /* Slideshow */
-        const slides = document.querySelectorAll(".slide");
-        const prevSlideBtn = document.getElementById("prev-slide");
-        const nextSlideBtn = document.getElementById("next-slide");
-        const slideDotsContainer = document.getElementById("slide-dots");
-        
-        let currentSlide = 0;
-        let slideInterval;
-        
-        function showSlide(index) {
-          slides.forEach((slide, i) => {
-            slide.classList.toggle("active", i === index);
-          });
-        
-          const dots = document.querySelectorAll(".slide-dot");
-          dots.forEach((dot, i) => {
-            dot.classList.toggle("active", i === index);
-          });
-        
-          currentSlide = index;
-        }
-        
-        function nextSlide() {
-          const nextIndex = (currentSlide + 1) % slides.length;
-          showSlide(nextIndex);
-        }
-        
-        function prevSlide() {
-          const prevIndex = (currentSlide - 1 + slides.length) % slides.length;
-          showSlide(prevIndex);
-        }
-        
-        function startSlideShow() {
-          slideInterval = setInterval(nextSlide, 3500);
-        }
-        
-        function resetSlideShow() {
-          clearInterval(slideInterval);
-          startSlideShow();
-        }
-        
-        slides.forEach((_, i) => {
-          const dot = document.createElement("button");
-          dot.className = "slide-dot";
-          dot.type = "button";
-          dot.setAttribute("aria-label", `Go to slide ${i + 1}`);
-          dot.addEventListener("click", () => {
-            showSlide(i);
-            resetSlideShow();
-          });
-          slideDotsContainer.appendChild(dot);
-        });
-        
-        prevSlideBtn.addEventListener("click", () => {
-          prevSlide();
-          resetSlideShow();
-        });
-        
-        nextSlideBtn.addEventListener("click", () => {
-          nextSlide();
-          resetSlideShow();
-        });
-        
-        showSlide(0);
-        startSlideShow();
-      
     })();
+    /* Slideshow */
+    const slides = document.querySelectorAll(".slide");
+    const prevSlideBtn = document.getElementById("prev-slide");
+    const nextSlideBtn = document.getElementById("next-slide");
+    const slideDotsContainer = document.getElementById("slide-dots");
+    
+    let currentSlide = 0;
+    let slideInterval;
+    
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === index);
+      });
+    
+      const dots = document.querySelectorAll(".slide-dot");
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("active", i === index);
+      });
+    
+      currentSlide = index;
+    }
+    
+    function nextSlide() {
+      const nextIndex = (currentSlide + 1) % slides.length;
+      showSlide(nextIndex);
+    }
+    
+    function prevSlide() {
+      const prevIndex = (currentSlide - 1 + slides.length) % slides.length;
+      showSlide(prevIndex);
+    }
+    
+    function startSlideShow() {
+      slideInterval = setInterval(nextSlide, 3500);
+    }
+    
+    function resetSlideShow() {
+      clearInterval(slideInterval);
+      startSlideShow();
+    }
+    
+    slides.forEach((_, i) => {
+      const dot = document.createElement("button");
+      dot.className = "slide-dot";
+      dot.type = "button";
+      dot.setAttribute("aria-label", `Go to slide ${i + 1}`);
+      dot.addEventListener("click", () => {
+        showSlide(i);
+        resetSlideShow();
+      });
+      slideDotsContainer.appendChild(dot);
+    });
+    
+    prevSlideBtn.addEventListener("click", () => {
+      prevSlide();
+      resetSlideShow();
+    });
+    
+    nextSlideBtn.addEventListener("click", () => {
+      nextSlide();
+      resetSlideShow();
+    });
+    
+    showSlide(0);
+    startSlideShow();
+
+    
   </script>
 </body>
 </html>
