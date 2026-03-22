@@ -1466,6 +1466,10 @@
           window.addEventListener("resize", resizeAssistant);
           resizeAssistant();
         })
+        .catch(err => {
+          console.error("Failed to load assistant model:", err);
+          showBubbleMessage("I loaded the page, but the Live2D model failed to load.");
+        });
         /* Slideshow */
         const slides = document.querySelectorAll(".slide");
         const prevSlideBtn = document.getElementById("prev-slide");
@@ -1531,11 +1535,7 @@
         
         showSlide(0);
         startSlideShow();
-        
-        .catch(err => {
-          console.error("Failed to load assistant model:", err);
-          showBubbleMessage("I loaded the page, but the Live2D model failed to load.");
-        });
+      
     })();
   </script>
 </body>
