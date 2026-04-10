@@ -1372,14 +1372,27 @@
     }
     
     function showLive2D() {
-      if (live2dVisible) return;
-    
       live2dVisible = true;
       ahogeIcon.classList.add("hide-ahoge");
       assistantStage.classList.remove("hidden-stage");
       assistantStage.classList.add("show-stage");
-      assistantBubble.classList.remove("show");
       spawnTransformEffect();
+    }
+    
+    function showAhoge() {
+      live2dVisible = false;
+      ahogeIcon.classList.remove("hide-ahoge");
+      assistantStage.classList.remove("show-stage");
+      assistantStage.classList.add("hidden-stage");
+      spawnTransformEffect();
+    }
+    
+    function toggleAssistantVisual() {
+      if (live2dVisible) {
+        showAhoge();
+      } else {
+        showLive2D();
+      }
     }
     
     function openAssistantChat() {
@@ -1414,7 +1427,7 @@
     }
 
     assistantToggleNav.addEventListener("click", () => {
-      showLive2D();
+      toggleAssistantVisual();
     });
     
     minimizeChatBtn.addEventListener("click", () => {
@@ -1428,7 +1441,7 @@
     setChatOpen(false);
 
     assistantBubble.addEventListener("click", () => {
-      openAssistantChat();
+      setChatOpen(true);
       assistantBubble.classList.remove("show");
     });
 
