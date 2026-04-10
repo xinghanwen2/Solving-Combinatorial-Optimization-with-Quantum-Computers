@@ -1269,6 +1269,7 @@
     const ahogeIcon = document.getElementById("ahoge-icon");
     const assistantEffects = document.getElementById("assistant-effects");
     const assistantStage = document.getElementById("assistant-stage");
+    const openChatBtn = document.getElementById("assistant-open");
 
     const expressionFiles = [
       "aixin",
@@ -1385,7 +1386,6 @@
         setTimeout(() => setChatOpen(true), 280);
         return;
       }
-    
       setChatOpen(true);
     }
     
@@ -1411,6 +1411,10 @@
       }
     }
 
+    assistantToggleNav.addEventListener("click", () => {
+      showLive2D();
+    });
+    
     minimizeChatBtn.addEventListener("click", () => {
       setChatOpen(false);
     });
@@ -1422,7 +1426,7 @@
     setChatOpen(false);
 
     assistantBubble.addEventListener("click", () => {
-      setChatOpen(true);
+      openAssistantChat();
       assistantBubble.classList.remove("show");
     });
 
