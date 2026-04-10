@@ -416,6 +416,85 @@
       z-index: 1;
     }
 
+    #assistant-layer{
+      overflow: visible;
+    }
+    
+    #assistant-effects{
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+      overflow: hidden;
+    }
+    
+    #ahoge-icon{
+      position: absolute;
+      right: 34px;
+      bottom: 8px;
+      width: 92px;
+      height: auto;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      transition: opacity .35s ease, transform .35s ease;
+      animation: ahoge-idle 7s ease-in-out infinite;
+    }
+    
+    #ahoge-icon.hide-ahoge{
+      opacity: 0;
+      transform: translateY(10px) scale(0.88);
+      animation: none;
+    }
+    
+    @keyframes ahoge-idle{
+      0%, 80%, 100% { transform: translateY(0) scale(1); }
+      84% { transform: translateY(-14px) scale(1.03); }
+      88% { transform: translateY(0) scale(0.97); }
+      92% { transform: translateY(-7px) scale(1.01); }
+    }
+    
+    #assistant-stage{
+      opacity: 1;
+      transition: opacity .35s ease, transform .35s ease;
+    }
+    
+    #assistant-stage.hidden-stage{
+      opacity: 0;
+      transform: scale(0.96);
+      pointer-events: none;
+    }
+    
+    #assistant-stage.show-stage{
+      opacity: 1;
+      transform: scale(1);
+    }
+    
+    .assistant-spark{
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(122,162,255,0.9);
+      box-shadow: 0 0 12px rgba(77,227,194,0.8);
+      animation: assistant-spark-burst .8s ease-out forwards;
+    }
+    
+    @keyframes assistant-spark-burst{
+      0%{
+        opacity: 0;
+        transform: translate(0, 0) scale(0.3);
+      }
+      20%{
+        opacity: 1;
+      }
+      100%{
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(1.2);
+      }
+    }
+
     /* Chat panel */
     #assistant-chat{
       position: absolute;
@@ -645,6 +724,7 @@
         <a href="#gallery">Gallery</a>
         <a href="#downloads">Downloads</a>
         <a href="https://github.com/xinghanwen2/Solving-Combinatorial-Optimization-with-Quantum-Computers" target="_blank">Repo</a>
+        <button id="assistant-toggle-nav" class="btn" type="button" aria-pressed="false"></button>
       </div>
     </div>
   </div>
@@ -1102,36 +1182,38 @@
   </div>
 
   <div id="assistant-layer">
-    <div id="assistant-bubble"></div>
+  <div id="assistant-effects"></div>
 
-    <div id="assistant-chat" class="hidden">
-      <div class="chat-header">
-        <span>Ask the AI Assistant</span>
-        <div class="chat-header-actions">
-          <button class="chat-icon-btn" id="clear-chat" type="button">Clear</button>
-          <button class="chat-icon-btn" id="minimize-chat" type="button">Hide</button>
-        </div>
+  <img id="ahoge-icon" src="assets/img/Ahoge.png" alt="Assistant icon" />
+
+  <div id="assistant-bubble"></div>
+
+  <div id="assistant-chat" class="hidden">
+    <div class="chat-header">
+      <span>Ask the AI Assistant</span>
+      <div class="chat-header-actions">
+        <button class="chat-icon-btn" id="clear-chat" type="button">Clear</button>
+        <button class="chat-icon-btn" id="minimize-chat" type="button">Hide</button>
       </div>
-
-      <div class="chat-messages" id="chat-messages">
-        <div class="msg bot">Hello! I’m your AI assistant. Ask me about our capstone project, QAOA, Max-Cut, IBM Quantum, or our progress.</div>
-      </div>
-
-      <form class="chat-form" id="chat-form">
-        <input
-          id="chat-input"
-          type="text"
-          placeholder="Type your question..."
-          autocomplete="off"
-        />
-        <button id="chat-send" type="submit">Send</button>
-      </form>
     </div>
 
-    <button id="assistant-open" type="button">Open Chat</button>
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg bot">Hello! I’m your AI assistant. Ask me about our capstone project, QAOA, Max-Cut, IBM Quantum, or our progress.</div>
+    </div>
 
-    <div id="assistant-stage"></div>
+    <form class="chat-form" id="chat-form">
+      <input
+        id="chat-input"
+        type="text"
+        placeholder="Type your question..."
+        autocomplete="off"
+      />
+      <button id="chat-send" type="submit">Send</button>
+    </form>
   </div>
+
+  <div id="assistant-stage" class="hidden-stage"></div>
+</div>
 
   <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/pixi.js@6/dist/browser/pixi.min.js"></script>
@@ -1181,9 +1263,12 @@
     const chatSend = document.getElementById("chat-send");
     const clearChatBtn = document.getElementById("clear-chat");
     const minimizeChatBtn = document.getElementById("minimize-chat");
-    const openChatBtn = document.getElementById("assistant-open");
     const assistantChat = document.getElementById("assistant-chat");
     const assistantBubble = document.getElementById("assistant-bubble");
+    const assistantToggleNav = document.getElementById("assistant-toggle-nav");
+    const ahogeIcon = document.getElementById("ahoge-icon");
+    const assistantEffects = document.getElementById("assistant-effects");
+    const assistantStage = document.getElementById("assistant-stage");
 
     const expressionFiles = [
       "aixin",
@@ -1263,6 +1348,47 @@
         console.error("Failed to trigger expression:", err);
       }
     }
+
+    function spawnTransformEffect() {
+      assistantEffects.innerHTML = "";
+    
+      for (let i = 0; i < 10; i++) {
+        const spark = document.createElement("span");
+        spark.className = "assistant-spark";
+        spark.style.left = `${42 + Math.random() * 18}%`;
+        spark.style.top = `${38 + Math.random() * 26}%`;
+        spark.style.setProperty("--dx", `${(Math.random() - 0.5) * 70}px`);
+        spark.style.setProperty("--dy", `${(Math.random() - 0.5) * 70}px`);
+        spark.style.animationDelay = `${Math.random() * 0.08}s`;
+        assistantEffects.appendChild(spark);
+      }
+    
+      setTimeout(() => {
+        assistantEffects.innerHTML = "";
+      }, 900);
+    }
+    
+    function showLive2D() {
+      if (live2dVisible) return;
+    
+      live2dVisible = true;
+      ahogeIcon.classList.add("hide-ahoge");
+      assistantStage.classList.remove("hidden-stage");
+      assistantStage.classList.add("show-stage");
+      assistantBubble.classList.remove("show");
+      spawnTransformEffect();
+    }
+    
+    function openAssistantChat() {
+      if (!live2dVisible) {
+        showLive2D();
+        setTimeout(() => setChatOpen(true), 280);
+        return;
+      }
+    
+      setChatOpen(true);
+    }
+    
 
     function addMessage(text, sender) {
       const div = document.createElement("div");
