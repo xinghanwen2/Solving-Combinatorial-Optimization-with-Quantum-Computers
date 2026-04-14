@@ -719,7 +719,7 @@
         <a href="#overview">Overview</a>
         <a href="#work">Work</a>
         <a href="#workflow">Workflow</a>
-        <a href="#weekly-goal">Current Focus</a>
+        <a href="#weekly-goal">Final Focus</a>
         <a href="quiz.html">Quiz Lab</a>
         <a href="#gallery">Gallery</a>
         <a href="#downloads">Downloads</a>
@@ -734,21 +734,23 @@
       <div class="card">
         <h1>Quantum Computing Capstone Project</h1>
         <p class="subtitle">
-          By Hanwen Xing, Matteo Johnson, and Anthony Gelasi — exploring quantum computing techniques for optimization,
-          implementing QAOA for Max-Cut, and building a website that documents our theory, experiments, and progress.
+          By Hanwen Xing, Matteo Johnson, and Anthony Gelasi — investigating how quantum computing can help solve
+          combinatorial optimization problems through QAOA, completing two implementation-focused project tracks,
+          and documenting our experiments, reports, and final demonstration materials on this website.
         </p>
 
         <div class="pillrow">
-          <div class="pill">IBM Quantum Course</div>
+          <div class="pill">IBM Quantum + Qiskit</div>
           <div class="pill">QAOA for Max-Cut</div>
-          <div class="pill">Qiskit Implementation</div>
-          <div class="pill">Literature Review</div>
-          <div class="pill">Benchmark Exploration</div>
+          <div class="pill">Benchmark Replication</div>
+          <div class="pill">RCPS/RCSP Application</div>
+          <div class="pill">Aer + IBM Hardware</div>
+          <div class="pill">Final Q/A + Design Expo</div>
         </div>
 
         <div class="btnrow">
           <a class="btn primary" href="#gallery">View Gallery</a>
-          <a class="btn" href="#weekly-goal">Current Focus</a>
+          <a class="btn" href="#weekly-goal">Final Focus</a>
           <a class="btn" href="#downloads">Download Materials</a>
           <a class="btn feature-quiz-btn" href="quiz.html">
               <span class="feature-quiz-label">Try our new feature</span>
@@ -758,18 +760,17 @@
       </div>
 
       <div class="card">
-        <div class="k">This Semester Focus</div>
+        <div class="k">Final Stage Focus</div>
         <div class="muted">
-          Build a strong foundation in quantum gates, quantum circuit construction, and QAOA, then connect the theory to
-          practical implementation for Max-Cut using IBM Quantum and Qiskit.
+          Present our completed capstone clearly: summarize the IBM/Qiskit learning phase, show both QAOA-related
+          implementation tracks, and communicate the main results, design choices, and takeaways in a polished final demo.
         </div>
         <hr style="border:none;border-top:1px solid var(--line);margin:14px 0;">
         <div class="k">Status</div>
         <div class="muted">
-          We have finished the foundational gate analysis, circuit construction,
-          and operator derivations needed for QAOA. We are now in the transition from theory to implementation:
-          reviewing relevant literature, identifying benchmark data and small graph test cases, and preparing to
-          implement and test our algorithm over the next week and a half.
+          Our project has moved past the setup stage. We completed the IBM Quantum learning work, finished our two
+          main implementation/report directions, and are now polishing the website, reports, Q&amp;A materials, and
+          Design Expo presentation so the final results are clear, accurate, and easy to explain.
         </div>
       </div>
     </div>
@@ -780,7 +781,7 @@
         <div class="slideshow-track" id="slideshow-track">
           <div class="slide active">
             <img src="assets/img/picture1.jpg" alt="Project slideshow image 1">
-            <div class="slide-caption">// Note to myself/ replace photos</div>
+            <div class="slide-caption">Project highlights from our capstone work</div>
           </div>
           <div class="slide">
             <img src="assets/img/picture2.jpg" alt="Project slideshow image 2">
@@ -814,288 +815,241 @@
 
     
 
-    <section id="work">
+    
+<section id="work">
       <div class="section-title">
         <h2>Work Completed</h2>
         <div class="hint">Click to expand details</div>
       </div>
 
       <details>
-        <summary>Task 1 — Quantum Gates</summary>
+        <summary>Foundation Work — IBM Quantum Course, Gates, and Circuit Basics</summary>
 
         <div class="detail-section">
-          <div class="detail-label">Problem</div>
+          <div class="detail-label">What we completed</div>
           <p>
-            The first task focused on the mathematical foundations of single-qubit quantum gates. We were asked to prove
-            several important identities involving the Hadamard gate and the Pauli matrices, including
-            <strong>HXH = Z</strong>, <strong>HZH = X</strong>, <strong>HYH = −Y</strong>, <strong>H† = H</strong>,
-            <strong>X² = Y² = Z² = I</strong>, <strong>H = (X + Z)/√2</strong>, and <strong>H² = I</strong>.
-            We also needed to compute tensor products such as <strong>σ₁ᶻ ⊗ σ₂ᶻ</strong> and
-            <strong>σ₁ᶻ ⊗ I ⊗ σ₃ᶻ</strong> to understand how operators act in multi-qubit systems.
+            Early in the project, we built a foundation in quantum computing through IBM Quantum coursework, Qiskit
+            practice, handwritten notes, and guided circuit exercises. This stage covered core ideas such as qubits,
+            superposition, entanglement, measurement, and standard gates including Hadamard, Pauli-X, and CNOT.
           </p>
         </div>
 
         <div class="detail-section">
-          <div class="detail-label">How we solved it</div>
+          <div class="detail-label">Why it mattered</div>
           <p>
-            We solved this task by writing each gate in explicit matrix form and performing direct matrix multiplication.
-            This approach made each identity concrete rather than symbolic. For example, multiplying the Hadamard matrix
-            by X and then by H shows exactly why the basis changes convert X into Z. The same method explains why HZH = X
-            and why conjugating Y by H introduces a negative sign.
-          </p>
-          <p>
-            For the tensor product calculations, we used the Kronecker product structure to expand 2×2 matrices into
-            4×4 and 8×8 matrices. This helped us see how a gate acting on one qubit is embedded into a larger system.
-            Conceptually, this task established the algebra needed later for QAOA, where cost Hamiltonians are built
-            from products of Z operators and where gate identities are used to simplify circuit construction.
+            This work gave us the background needed to move from basic circuits to QAOA. It also helped us become
+            comfortable building, simulating, and interpreting quantum circuits in Python before starting the larger
+            optimization experiments.
           </p>
           <ul class="detail-list">
-            <li>Represent each gate explicitly as a matrix.</li>
-            <li>Verify identities through direct multiplication.</li>
-            <li>Interpret H as a basis-changing operator between X and Z descriptions.</li>
-            <li>Use tensor products to model multi-qubit operators precisely.</li>
+            <li>Completed IBM Quantum learning activities and Qiskit exercises.</li>
+            <li>Practiced circuit construction, state transformations, and measurement analysis.</li>
+            <li>Built the mathematical and coding background needed for the later implementation stages.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Implementation Track 1 — QAOA for Max-Cut Benchmarking</summary>
+
+        <div class="detail-section">
+          <div class="detail-label">Project goal</div>
+          <p>
+            Our first major implementation track focused on QAOA for the Max-Cut problem. We used this as a direct and
+            well-known combinatorial optimization benchmark so that we could compare quantum and classical approaches
+            across increasing graph sizes.
+          </p>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-label">How we implemented it</div>
+          <p>
+            We generated graphs across multiple sizes, built QAOA circuits in Qiskit, transpiled them, and ran them on
+            the Aer simulator with repeated shots. The classical comparison used brute force to enumerate all possible
+            partitions, while the QAOA side used measured bitstrings to identify high-quality cuts.
+          </p>
+          <ul class="detail-list">
+            <li>Tested increasing graph sizes to observe scaling behavior.</li>
+            <li>Ran QAOA at <strong>p = 1</strong> with fixed <strong>γ</strong> and <strong>β</strong> values.</li>
+            <li>Collected execution time, approximation ratio, and success probability.</li>
+            <li>Compared QAOA results against classical brute-force solutions.</li>
           </ul>
         </div>
 
         <div class="detail-section">
-          <div class="detail-label">Why this task matters</div>
+          <div class="detail-label">What this track showed</div>
           <p>
-            This task gave us the mathematical language needed for the rest of the project. QAOA is built from repeated
-            applications of structured quantum operators, so understanding how gates combine, transform, and scale to
-            larger systems is essential before implementing the algorithm in code.
+            This part of the project let us study QAOA in a controlled benchmark setting. Instead of treating the
+            algorithm only as theory, we evaluated how it behaves in practice and how its solution quality and runtime
+            compare to classical baselines.
           </p>
         </div>
       </details>
 
       <details>
-        <summary>Task 2 — Create and Execute a Simple Quantum Circuit</summary>
+        <summary>Implementation Track 2 — QAOA-Related Scheduling Application (RCPS/RCSP)</summary>
 
         <div class="detail-section">
-          <div class="detail-label">Problem</div>
+          <div class="detail-label">Problem setting</div>
           <p>
-            The second task moved from pure gate algebra to actual circuit construction. We were asked to reproduce a
-            small quantum circuit using IBM’s interface, place the correct gates on the correct qubits, and execute it
-            on one of IBM’s quantum backends. The circuit included initialization, gate placement, entangling structure,
-            and final measurement, so the main challenge was understanding both the logical sequence of operations and
-            the physical interpretation of the measured outputs.
+            Our second implementation direction connected quantum optimization to a scheduling-style application:
+            resource-constrained project scheduling. In this setting, jobs must respect precedence rules and limited
+            shared resources, which makes the problem hard to solve exactly at scale.
           </p>
         </div>
 
         <div class="detail-section">
-          <div class="detail-label">How we solved it</div>
+          <div class="detail-label">Approach</div>
           <p>
-            We broke the circuit into stages. First, we identified the role of each gate in the diagram and matched the
-            gate placement to the correct qubit lines. Then we constructed the circuit step by step, making sure the
-            control-target relationship of the entangling gate was correct. After that, we added measurement operations
-            and ran the circuit through IBM Quantum tools.
-          </p>
-          <p>
-            The main idea in solving this task was to treat the circuit as a sequence of state transformations. Rather
-            than simply copying the visual diagram, we asked what each gate was doing to the qubit state at that point.
-            The X gate flips a basis state, the H gates create superposition, the controlled operation introduces
-            correlation between qubits, and the measurement maps the quantum state into classical bits that can be
-            interpreted through counts and outcome frequencies.
+            We modeled the workflow as a conflict-resolution loop. First, we built an earliest-start schedule. Then we
+            detected overlapping jobs that exceeded resource limits and used those conflicts to form a graph. Max-Cut
+            became the optimization subproblem, and QAOA was used as the bottleneck-solving component that helped split
+            conflicting jobs into groups.
           </p>
           <ul class="detail-list">
-            <li>Read the circuit from left to right as a sequence of transformations.</li>
-            <li>Map each gate to the correct qubit line and preserve control-target direction.</li>
-            <li>Measure the final state and interpret output bitstrings.</li>
-            <li>Use the execution results to connect theory with real hardware behavior.</li>
+            <li>Built scheduling logic and conflict detection in Python.</li>
+            <li>Used Max-Cut as the core optimization step inside the scheduling workflow.</li>
+            <li>Worked with tools such as NetworkX, Rustworkx, Google Colab, and IBM quantum resources.</li>
+            <li>Connected the abstract QAOA idea to a more application-oriented problem setting.</li>
           </ul>
         </div>
 
         <div class="detail-section">
-          <div class="detail-label">Circuit image</div>
-          <div class="task-image-wrap">
-            <!-- Replace the src below with your own saved screenshot path if needed -->
-            <img class="task-image" src="assets/img/task2-quantum-circuit.png" alt="Task 2 simple quantum circuit on IBM Quantum">
-            <div class="task-image-caption">
-            </div>
-          </div>
-        </div>
-
-        <div class="detail-section">
-          <div class="detail-label">Why this task matters</div>
+          <div class="detail-label">Why this track matters</div>
           <p>
-            This task was our first complete connection between abstract quantum gates and an executable experiment.
-            It showed how a circuit diagram becomes a runnable object in IBM Quantum and prepared us for later work,
-            where QAOA must also be built as a structured circuit rather than only described mathematically.
+            This track moved the project beyond a pure benchmark and toward a real optimization context. It helped us
+            show how QAOA-style methods can be embedded inside a larger workflow rather than being presented only as an
+            isolated textbook example.
           </p>
         </div>
       </details>
 
       <details>
-        <summary>Task 3 — Quantum Gates U(C,γ) and U(B,β)</summary>
+        <summary>Final Deliverables — Reports, Website, and Presentation Materials</summary>
 
         <div class="detail-section">
-          <div class="detail-label">Problem</div>
+          <div class="detail-label">What we prepared</div>
           <p>
-            The third task introduced the key operators used in QAOA. We were asked to revisit the definition of the
-            cost unitary <strong>U(C,γ)</strong> and analyze how it is constructed for Max-Cut from terms of the form
-            <strong>C⟨ij⟩ = 1/2 (I − σᶻᵢ ⊗ σᶻⱼ)</strong>. We then needed to calculate operator expressions such as
-            <strong>e<sup>−iγ(I − σ₁ᶻ ⊗ σ₂ᶻ)</sup></strong> for a two-qubit system and
-            <strong>e<sup>−iγ(I − σ₁ᶻ ⊗ I ⊗ σ₃ᶻ)</sup></strong> for a three-qubit system.
+            In the final stage, we organized the project into a clearer public-facing form: written reports, visuals,
+            the project website, and presentation material for final review. The goal is not only to show code, but to
+            explain the motivation, method, experiment design, and lessons learned in a way that is easy to present.
           </p>
         </div>
 
         <div class="detail-section">
-          <div class="detail-label">How we solved it</div>
+          <div class="detail-label">What this website now represents</div>
           <p>
-            We solved this task by recognizing that these operators are diagonal in the computational basis because they
-            are built from Z-type terms. That means the exponential can be understood through the eigenvalues of the
-            underlying matrix. Once the basis states are identified, each state picks up a phase depending on whether
-            the relevant qubits agree or disagree. This is exactly why the cost operator is useful for Max-Cut: it
-            rewards bitstrings that correspond to edges crossing the cut.
-          </p>
-          <p>
-            We also connected this mathematics to circuit implementation. In practice, the cost unitary is not left as
-            a symbolic exponential. Instead, it is decomposed into gates that IBM hardware can run, usually through
-            combinations of CNOT gates and Z-rotations. The mixer operator <strong>U(B,β)</strong> is easier to implement
-            because it is built from X rotations on each qubit. This task therefore served as the bridge between operator
-            notation and real quantum circuits.
-          </p>
-          <ul class="detail-list">
-            <li>Use Z-basis eigenvalues to evaluate the exponential operators.</li>
-            <li>Interpret the resulting phases in terms of Max-Cut edge contributions.</li>
-            <li>Understand why cost operators are diagonal and mixer operators are X-based.</li>
-            <li>Prepare these operators for later decomposition into universal gates.</li>
-          </ul>
-        </div>
-
-        <div class="detail-section">
-          <div class="detail-label">Why this task matters</div>
-          <p>
-            This task is the theoretical core of QAOA. It explains where the algorithm’s two alternating layers come
-            from and why they are meaningful. Without this step, implementing QAOA would be mostly code without a clear
-            understanding of the optimization logic behind it.
-          </p>
-        </div>
-      </details>
-
-      <details>
-        <summary>Task 4 Implementation of QAOA on Max-Cut</summary>
-
-        <div class="detail-section">
-          <div class="detail-label">Problem</div>
-          <p>
-            The current task asks us to move from foundational theory to a working algorithm. We need to elaborate the
-            Qiskit code structure for QAOA, explain how <strong>U(C,γ)</strong> and <strong>U(B,β)</strong> are built for
-            Max-Cut, discuss how they can be decomposed into universal gates on IBM’s quantum computers, and then
-            implement the algorithm for a small graph and submit the results.
-          </p>
-        </div>
-
-        <div class="detail-section">
-          <div class="detail-label">Current direction</div>
-          <p>
-            At this stage, we are reviewing literature related to QAOA performance, graph-based optimization, and
-            existing implementation strategies. We have also started identifying benchmark data and small graph instances
-            that are appropriate for testing. This allows us to compare our implementation against known examples and
-            gives us a practical basis for evaluating output quality.
-          </p>
-          <p>
-            Our next step is to implement the algorithm over the next week and a half. This includes building the
-            circuit layers in Qiskit, selecting initial parameter values, running experiments on simulators, and then
-            comparing measured bitstrings according to their Max-Cut values. As the implementation becomes stable, we
-            will add the results and interpretation back into this website.
+            This website serves as a final showcase of the capstone project. It summarizes the background learning,
+            documents our two main project directions, presents progress artifacts, and supports final Q&amp;A and
+            Design Expo discussion.
           </p>
         </div>
       </details>
     </section>
 
-    <section id="weekly-goal">
+
+    
+<section id="weekly-goal">
       <div class="section-title">
-        <h2>Current Focus</h2>
-        <div class="hint">Updated project direction</div>
+        <h2>Final Focus</h2>
+        <div class="hint">What we are polishing now</div>
       </div>
 
       <div class="grid">
         <div class="card">
-          <div class="k">What We Completed This Week</div>
+          <div class="k">Reports &amp; Results Cleanup</div>
           <div class="muted">
-            We reviewed literature related to QAOA and Max-Cut, clarified the theoretical background for our current
-            implementation phase, and identified benchmark-style data and small graph examples that can be used to test
-            our algorithm.
+            We are polishing the final reports so the two implementation tracks, experiment logic, and key takeaways are
+            presented clearly and consistently.
           </div>
         </div>
 
         <div class="card">
-          <div class="k">Next Step</div>
+          <div class="k">Q&amp;A Preparation</div>
           <div class="muted">
-            Over the next week and a half, we will begin implementing our algorithm in Qiskit, test the circuit on
-            simulator-based examples first, and then organize the results so they can be clearly presented on this site.
+            Since the project is in its final stage, we are preparing for questions about QAOA, Max-Cut, our experiment
+            design, the scheduling application, and what our results do and do not show.
           </div>
         </div>
 
         <div class="card">
-          <div class="k">Success Criteria</div>
+          <div class="k">Design Expo Readiness</div>
           <div class="muted">
-            A working first-pass implementation of QAOA for a small Max-Cut graph, with readable code, interpretable
-            measurement results, and a clear explanation of how the benchmark cases connect to our final evaluation.
+            We are refining the website, slides, visuals, and speaking points so the project is ready to present next
+            week in a polished and easy-to-follow way.
           </div>
         </div>
       </div>
 
       <details style="margin-top:12px;">
-        <summary>Show more: Important part of this task</summary>
+        <summary>Show more: What counts as “final-stage” work now</summary>
 
         <p>
-          At this point in the project, the most important step is no longer only understanding the mathematics.
-          We now need to convert that theory into a reliable implementation workflow. Reviewing literature helps us
-          understand how others construct and evaluate QAOA, while benchmark examples give us manageable test cases
-          before scaling up to more interesting graphs.
+          The main technical implementation work has already been completed at the level we want to present. Our current
+          priority is communication quality: making sure the website, slides, and reports all tell the same story and
+          clearly connect the theory, the two implementation directions, and the final conclusions.
         </p>
 
         <p>
-          This also helps us make the website more meaningful. Instead of showing only definitions, we can document
-          our actual progress: what graph we chose, how the circuit was built, what bitstrings were measured, and how
-          those outcomes relate to cut quality.
+          That means focusing on clean explanations, readable visuals, and strong presentation flow rather than adding a
+          brand-new experimental branch at the last minute.
         </p>
 
         <details style="margin-top:10px;">
-          <summary>Show more: Implementation checklist for the next phase</summary>
+          <summary>Show more: Final checklist</summary>
           <p>
-            1) Choose a benchmark graph or small test graph.<br>
-            2) Define the Max-Cut objective as a cost Hamiltonian.<br>
-            3) Build the QAOA circuit in Qiskit using cost and mixer layers.<br>
-            4) Run experiments on a simulator to confirm correctness.<br>
-            5) Evaluate measured bitstrings by their cut values.<br>
-            6) Summarize results and add them to the website with explanation and visuals.
+            1) Finalize the wording of the website.<br>
+            2) Polish the two project-report writeups and supporting visuals.<br>
+            3) Make sure the slides match the website and the spoken presentation.<br>
+            4) Prepare short explanations for common Q&amp;A topics.<br>
+            5) Rehearse for the Design Expo and final review.
           </p>
         </details>
 
         <details style="margin-top:10px;">
-          <summary>Show more: What benchmark data means in this project</summary>
+          <summary>Show more: What visitors should understand after reading this site</summary>
           <p>
-            In our context, benchmark data refers to graph instances or example datasets that are commonly used to test
-            optimization methods. These examples help us compare expected behavior with our measured outcomes, making it
-            easier to verify whether our implementation is producing reasonable results.
+            Visitors should leave with a clear picture of what QAOA is, why Max-Cut was used as a benchmark, how our
+            scheduling-related application connects to combinatorial optimization, and what we learned by comparing
+            quantum and classical approaches in practice.
           </p>
         </details>
       </details>
     </section>
 
-    <section id="workflow">
+
+    
+<section id="workflow">
       <div class="section-title">
-        <h2>Workflow & Milestones</h2>
-        <div class="hint"></div>
+        <h2>Workflow &amp; Milestones</h2>
+        <div class="hint">How the project developed across phases</div>
       </div>
 
       <div class="grid">
         <div class="card">
-          <div class="k">Our Workflow</div>
-          <div class="muted">Foundations → Literature Review → Qiskit Experiments → Implementation → Evaluation → Final Demo</div>
+          <div class="k">Phase 1 — Foundations</div>
+          <div class="muted">
+            Literature review, IBM Quantum learning, Qiskit practice, and problem-background study for combinatorial
+            optimization and Max-Cut.
+          </div>
         </div>
         <div class="card">
-          <div class="k">Our Planning</div>
-          <div class="muted">Track weekly progress, document completed tasks, test benchmark graphs, and present a polished final demonstration.</div>
+          <div class="k">Phase 2 — Experimentation</div>
+          <div class="muted">
+            Build and test QAOA circuits, run simulator and IBM-based experiments, compare against classical methods,
+            and organize benchmark-style results.
+          </div>
         </div>
         <div class="card">
-          <div class="k">Final Deliverable</div>
-          <div class="muted">An interactive website that explains the theory, shows circuit development, presents implementation results, and communicates real progress clearly.</div>
+          <div class="k">Phase 3 — Final Presentation</div>
+          <div class="muted">
+            Complete reports, website, visuals, and presentation materials that summarize both implementation tracks and
+            the main lessons from the project.
+          </div>
         </div>
       </div>
     </section>
+
 
     <section id="gallery">
       <div class="section-title">
@@ -1127,7 +1081,7 @@
     <section id="downloads">
       <div class="section-title">
         <h2>Downloads</h2>
-        <div class="hint">Project documentation and reports</div>
+        <div class="hint">Project documentation, reports, and supporting materials</div>
       </div>
 
       <div class="grid">
@@ -1198,7 +1152,7 @@
     </div>
 
     <div class="chat-messages" id="chat-messages">
-      <div class="msg bot">Hello! I’m your AI assistant. Ask me about our capstone project, QAOA, Max-Cut, IBM Quantum, or our progress.</div>
+      <div class="msg bot">Hello! I’m your AI assistant. Ask me about our capstone project, QAOA, Max-Cut, IBM Quantum, our two implementation tracks, or our final presentation prep.</div>
     </div>
 
     <form class="chat-form" id="chat-form">
@@ -1448,7 +1402,7 @@
     clearChatBtn.addEventListener("click", () => {
       chatMessages.innerHTML = "";
       addMessage(
-        "Hello! I’m your AI assistant. Ask me about our capstone project, QAOA, Max-Cut, IBM Quantum, or our progress.",
+        "Hello! I’m your AI assistant. Ask me about our capstone project, QAOA, Max-Cut, IBM Quantum, our two implementation tracks, or our final presentation prep.",
         "bot"
       );
     });
@@ -1507,7 +1461,7 @@
       "Is there anything you don’t understand?(;｀O´)o",
       "Want a quick explanation of quantum gates?(*´∀｀*)ノ♡",
       "Hello! I'm your AI assistant(｢･ω･)｢",
-      "I’m willing to help!",
+      "Ask me about our final project results!",
       "Click here to start a chat_(•̀ω•́ 」∠)_"
     ];
 
