@@ -849,25 +849,189 @@
         </div>
         
         <details style="margin-top:10px;">
-          <summary>Show more: IBM Course + Qiskit foundation work</summary>
-        
+      <summary>Show more: spcific task we did</summary>
+    
+      <details>
+        <summary>Task 1 — Quantum Gates</summary>
+    
+        <div class="detail-section">
+          <div class="detail-label">Problem</div>
           <p>
-            During this foundation stage, we completed IBM Quantum coursework through Canvas and worked through Qiskit
-            tutorials and coding exercises. This gave us practical experience with circuit construction, simulation,
-            measurement, and debugging before moving into QAOA-focused work.
+            The first task focused on the mathematical foundations of single-qubit quantum gates. We were asked to prove
+            several important identities involving the Hadamard gate and the Pauli matrices, including
+            <strong>HXH = Z</strong>, <strong>HZH = X</strong>, <strong>HYH = −Y</strong>, <strong>H† = H</strong>,
+            <strong>X² = Y² = Z² = I</strong>, <strong>H = (X + Z)/√2</strong>, and <strong>H² = I</strong>.
+            We also needed to compute tensor products such as <strong>σ₁ᶻ ⊗ σ₂ᶻ</strong> and
+            <strong>σ₁ᶻ ⊗ I ⊗ σ₃ᶻ</strong> to understand how operators act in multi-qubit systems.
           </p>
-        
+        </div>
+    
+        <div class="detail-section">
+          <div class="detail-label">How we solved it</div>
+          <p>
+            We solved this task by writing each gate in explicit matrix form and performing direct matrix multiplication.
+            This approach made each identity concrete rather than symbolic. For example, multiplying the Hadamard matrix
+            by X and then by H shows exactly why the basis changes convert X into Z. The same method explains why HZH = X
+            and why conjugating Y by H introduces a negative sign.
+          </p>
+          <p>
+            For the tensor product calculations, we used the Kronecker product structure to expand 2×2 matrices into
+            4×4 and 8×8 matrices. This helped us see how a gate acting on one qubit is embedded into a larger system.
+            Conceptually, this task established the algebra needed later for QAOA, where cost Hamiltonians are built
+            from products of Z operators and where gate identities are used to simplify circuit construction.
+          </p>
           <ul class="detail-list">
-            <li>Completed IBM Quantum coursework through Canvas.</li>
-            <li>Implemented Qiskit tutorials and coding exercises.</li>
-            <li>Built and tested quantum circuits in Python.</li>
-            <li>Learned key concepts such as Hadamard, Pauli-X, and CNOT gates.</li>
-            <li>Studied operators, state transformations, and circuit outputs.</li>
-            <li>Completed demos, assignments, and practice problems.</li>
-            <li>Created handwritten notes to strengthen understanding.</li>
-            <li>Used IBM Cloud tools for simulation and code execution.</li>
+            <li>Represent each gate explicitly as a matrix.</li>
+            <li>Verify identities through direct multiplication.</li>
+            <li>Interpret H as a basis-changing operator between X and Z descriptions.</li>
+            <li>Use tensor products to model multi-qubit operators precisely.</li>
           </ul>
-          </details>
+        </div>
+    
+        <div class="detail-section">
+          <div class="detail-label">Why this task matters</div>
+          <p>
+            This task gave us the mathematical language needed for the rest of the project. QAOA is built from repeated
+            applications of structured quantum operators, so understanding how gates combine, transform, and scale to
+            larger systems is essential before implementing the algorithm in code.
+          </p>
+        </div>
+      </details>
+    
+      <details>
+        <summary>Task 2 — Create and Execute a Simple Quantum Circuit</summary>
+    
+        <div class="detail-section">
+          <div class="detail-label">Problem</div>
+          <p>
+            The second task moved from pure gate algebra to actual circuit construction. We were asked to reproduce a
+            small quantum circuit using IBM’s interface, place the correct gates on the correct qubits, and execute it
+            on one of IBM’s quantum backends. The circuit included initialization, gate placement, entangling structure,
+            and final measurement, so the main challenge was understanding both the logical sequence of operations and
+            the physical interpretation of the measured outputs.
+          </p>
+        </div>
+    
+        <div class="detail-section">
+          <div class="detail-label">How we solved it</div>
+          <p>
+            We broke the circuit into stages. First, we identified the role of each gate in the diagram and matched the
+            gate placement to the correct qubit lines. Then we constructed the circuit step by step, making sure the
+            control-target relationship of the entangling gate was correct. After that, we added measurement operations
+            and ran the circuit through IBM Quantum tools.
+          </p>
+          <p>
+            The main idea in solving this task was to treat the circuit as a sequence of state transformations. Rather
+            than simply copying the visual diagram, we asked what each gate was doing to the qubit state at that point.
+            The X gate flips a basis state, the H gates create superposition, the controlled operation introduces
+            correlation between qubits, and the measurement maps the quantum state into classical bits that can be
+            interpreted through counts and outcome frequencies.
+          </p>
+          <ul class="detail-list">
+            <li>Read the circuit from left to right as a sequence of transformations.</li>
+            <li>Map each gate to the correct qubit line and preserve control-target direction.</li>
+            <li>Measure the final state and interpret output bitstrings.</li>
+            <li>Use the execution results to connect theory with real hardware behavior.</li>
+          </ul>
+        </div>
+    
+        <div class="detail-section">
+          <div class="detail-label">Circuit image</div>
+          <div class="task-image-wrap">
+            <img class="task-image" src="assets/img/task2-quantum-circuit.png" alt="Task 2 simple quantum circuit on IBM Quantum">
+            <div class="task-image-caption">
+            </div>
+          </div>
+        </div>
+    
+        <div class="detail-section">
+          <div class="detail-label">Why this task matters</div>
+          <p>
+            This task was our first complete connection between abstract quantum gates and an executable experiment.
+            It showed how a circuit diagram becomes a runnable object in IBM Quantum and prepared us for later work,
+            where QAOA must also be built as a structured circuit rather than only described mathematically.
+          </p>
+        </div>
+      </details>
+    
+      <details>
+        <summary>Task 3 — Quantum Gates U(C,γ) and U(B,β)</summary>
+    
+        <div class="detail-section">
+          <div class="detail-label">Problem</div>
+          <p>
+            The third task introduced the key operators used in QAOA. We were asked to revisit the definition of the
+            cost unitary <strong>U(C,γ)</strong> and analyze how it is constructed for Max-Cut from terms of the form
+            <strong>C⟨ij⟩ = 1/2 (I − σᶻᵢ ⊗ σᶻⱼ)</strong>. We then needed to calculate operator expressions such as
+            <strong>e<sup>−iγ(I − σ₁ᶻ ⊗ σ₂ᶻ)</sup></strong> for a two-qubit system and
+            <strong>e<sup>−iγ(I − σ₁ᶻ ⊗ I ⊗ σ₃ᶻ)</sup></strong> for a three-qubit system.
+          </p>
+        </div>
+    
+        <div class="detail-section">
+          <div class="detail-label">How we solved it</div>
+          <p>
+            We solved this task by recognizing that these operators are diagonal in the computational basis because they
+            are built from Z-type terms. That means the exponential can be understood through the eigenvalues of the
+            underlying matrix. Once the basis states are identified, each state picks up a phase depending on whether
+            the relevant qubits agree or disagree. This is exactly why the cost operator is useful for Max-Cut: it
+            rewards bitstrings that correspond to edges crossing the cut.
+          </p>
+          <p>
+            We also connected this mathematics to circuit implementation. In practice, the cost unitary is not left as
+            a symbolic exponential. Instead, it is decomposed into gates that IBM hardware can run, usually through
+            combinations of CNOT gates and Z-rotations. The mixer operator <strong>U(B,β)</strong> is easier to implement
+            because it is built from X rotations on each qubit. This task therefore served as the bridge between operator
+            notation and real quantum circuits.
+          </p>
+          <ul class="detail-list">
+            <li>Use Z-basis eigenvalues to evaluate the exponential operators.</li>
+            <li>Interpret the resulting phases in terms of Max-Cut edge contributions.</li>
+            <li>Understand why cost operators are diagonal and mixer operators are X-based.</li>
+            <li>Prepare these operators for later decomposition into universal gates.</li>
+          </ul>
+        </div>
+    
+        <div class="detail-section">
+          <div class="detail-label">Why this task matters</div>
+          <p>
+            This task is the theoretical core of QAOA. It explains where the algorithm’s two alternating layers come
+            from and why they are meaningful. Without this step, implementing QAOA would be mostly code without a clear
+            understanding of the optimization logic behind it.
+          </p>
+        </div>
+      </details>
+    
+      <details>
+        <summary>Task 4 Implementation of QAOA on Max-Cut</summary>
+    
+        <div class="detail-section">
+          <div class="detail-label">Problem</div>
+          <p>
+            The current task asks us to move from foundational theory to a working algorithm. We need to elaborate the
+            Qiskit code structure for QAOA, explain how <strong>U(C,γ)</strong> and <strong>U(B,β)</strong> are built for
+            Max-Cut, discuss how they can be decomposed into universal gates on IBM’s quantum computers, and then
+            implement the algorithm for a small graph and submit the results.
+          </p>
+        </div>
+    
+        <div class="detail-section">
+          <div class="detail-label">Current direction</div>
+          <p>
+            At this stage, we are reviewing literature related to QAOA performance, graph-based optimization, and
+            existing implementation strategies. We have also started identifying benchmark data and small graph instances
+            that are appropriate for testing. This allows us to compare our implementation against known examples and
+            gives us a practical basis for evaluating output quality.
+          </p>
+          <p>
+            Our next step is to implement the algorithm over the next week and a half. This includes building the
+            circuit layers in Qiskit, selecting initial parameter values, running experiments on simulators, and then
+            comparing measured bitstrings according to their Max-Cut values. As the implementation becomes stable, we
+            will add the results and interpretation back into this website.
+          </p>
+        </div>
+      </details>
+    </details>
         </details>
         
         <details>
